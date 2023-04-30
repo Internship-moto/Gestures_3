@@ -1,0 +1,45 @@
+{
+  "//": "путь к папке с данными для ноутбуков",
+  "PATH" : "../data/",
+   
+  "PATH_FIGURES" : "../figures/",
+
+  "//": "пути к папкам с моделями",
+  "PATH_MODEL" : "../models/", 
+
+  "PATH_TEMP_MODEL" : "../models/weights_best_model/",
+
+  "PATH_BEST_MODEL": "/models/",
+
+  "//": "Set seed value",
+  "seed_value" : 0,
+
+  "//": "Параметры для подготовки данных в mne",
+  "points" : 1000.0,
+  "point_to_time" : 33,
+  "tmin" : -1,
+  "tmax" : 2.5,
+
+  "//": "количество пилотов (независимых рядов данных)",
+
+
+  "//": "количество датчиков",
+
+
+  "//": "количество основных жестов (кроме 'битых' данных)",
+  "GEST" : 9,
+
+  "gestures": [
+    "open", 
+    "little finger flex",  
+    "ring finger flex",
+    "middle finger flex",
+    "pistol gesture",  
+    "index finger flex",
+    "thumb flex",
+    "ok gesture",
+    "grab gesture" 
+  ]
+
+}
+  
