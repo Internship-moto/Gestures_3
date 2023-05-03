@@ -18,7 +18,7 @@ if not sys.warnoptions:
 # Библиотека вызова функций, специально разработанных для данного ноутбука
 sys.path.insert(1, '../')
 
-from utils.functions import config_reader
+from utils.config_reader import config_reader
 from utils.figures import get_all_sensors_plot  #get_sensor_command_plot
 
 # import constants from the config
