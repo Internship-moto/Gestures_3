@@ -7,10 +7,6 @@
 * [Results](README.md#Results)                              
 * [Project structure](README.md#Project-structure)        
 
-<<<<<<< HEAD
-[ссылка на соревнование (пока не работает)](https://)
-=======
->>>>>>> main
 
 Уважаемые коллеги,
 
