@@ -27,8 +27,14 @@ config = config_reader('../config/data_config.json')
 
 
 
-def get_mse(y_test, y_pred, GLOVE_CH=config.GLOVE_CH):
+def get_mse(y_test:pd.DataFrame, y_pred:pd.DataFrame, GLOVE_CH=config.GLOVE_CH):
     """Display MSE metrics for the test sample
+    
+    Arguments:
+    ---------
+    y_test(pd.DataFrame) - target values from the test sample 
+    y_pred(pd.DataFrame) - predictions
+    ------
     """    
     metrics_test = pd.Series({col : mean_squared_error(y_test[col], y_pred[col]) for col in GLOVE_CH})
 
