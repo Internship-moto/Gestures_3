@@ -5,32 +5,37 @@ import sys
 import glob
 import json
 from dotmap import DotMap
+import pandas as pd
+
+from sklearn.metrics import mean_squared_error
 
 
 # библиотека взаимодействия с интерпретатором
 if not sys.warnoptions:
     import warnings
     warnings.simplefilter("ignore")
+    
+# Библиотека вызова функций, специально разработанных для данного ноутбука
+sys.path.insert(1, '../')
+
+from utils.functions import config_reader
+from utils.figures import get_all_sensors_plot  #get_sensor_command_plot
+
+# import constants from the config
+config = config_reader('../config/data_config.json') 
 
 
-def config_reader(path_to_json_conf: str) -> dict:
-    """Функция загрузки параметров конфигурации в память.
 
-    Args:
-    ------------
-    path_to_json_conf (_str_): путь к файлу конфигурации
 
-    Returns:
-    ------------
-    config (dict): словарь с параметрами конфигурации
+def get_mse(y_test, y_pred, GLOVE_CH=config.GLOVE_CH):
+    """Display MSE metrics for the test sample
     """    
-    with open(path_to_json_conf, 'r') as config_file:
-        config_dict = json.load(config_file)
-    
-    config = DotMap(config_dict)
-    
-    return config
+    metrics_test = pd.Series({col : mean_squared_error(y_test[col], y_pred[col]) for col in GLOVE_CH})
 
+    print('MSE metrics for Test: \n--------')
+    display(metrics_test)
+    
+    
 
 # def get_id_from_data():
 #     """Функция загрузки номеров пилотов из данных в папке data
