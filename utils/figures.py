@@ -51,9 +51,41 @@ def get_all_sensors_plot(id:int, X_train:pd.DataFrame, plot_counter:int=None):
         
     fig.update_layout(title=dict(text=f'Рис. {plot_counter} - Sensor signals <br> for the test ' + str(id), x=.5, y=0.08, xanchor='center'))
 
+def get_free_movements_plot(X_train:pd.DataFrame, y_train:pd.DataFrame):
+    """Displays free movements plot (done with no protocol)
 
+    Args:
+        X_train (pd.DataFrame): Train data
+        y_train (pd.DataFrame): targets (6 dependent variables)
+    """    
+    GLOVE_CH1 = y_train.columns.tolist()
+    
+    fig, ax = plt.subplots(2, 1, sharex=True, figsize=(12, 6))
+    plt.sca(ax[0])
+    plt.plot(X_train.index, X_train.values) # можно заменить на gestures_train['ts'].values
+    plt.title('OMG')
 
-def get_signals_comparison_plot(y_train, y_test, y_pred, only_test=None):
+    plt.sca(ax[1])
+    plt.plot(X_train.index, y_train - np.arange(len(GLOVE_CH1)) * 200) #gestures_train[GLOVE_CH].values
+    plt.yticks(-np.arange(len(GLOVE_CH1)) * 200, GLOVE_CH1)
+    plt.title('Glove')
+    plt.xlabel('Timesteps')
+
+    fig.suptitle('Free movements')
+    fig.tight_layout()
+    
+    
+
+def get_signals_comparison_plot(y_train:pd.DataFrame, y_test:pd.DataFrame, y_pred:pd.DataFrame, only_test:int=None):
+    """Displays test and predicted data on the same plot
+
+    Args:
+        y_train (pd.DataFrame): targets (dependent variables) of the train sample
+        y_test  (pd.DataFrame): targets (dependent variables) of the test sample
+        y_pred  (pd.DataFrame): predicted values for the test sample
+        only_test (int, optional): a lable for displaying the given dataset [0,1]. 
+                                Defaults to None and displays train and test data, 1 - display only test data
+    """    
     fig, axes = plt.subplots(1, 1, figsize=(10, 4)) # plt.sca(axes)
 
     GLOVE_CH = y_train.columns.tolist()
