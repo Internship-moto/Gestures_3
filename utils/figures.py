@@ -53,7 +53,7 @@ def get_all_sensors_plot(id:int, X_train:pd.DataFrame, plot_counter:int=None):
 
 
 
-def get_signals_comparison_plot(y_train, y_test, y_pred):
+def get_signals_comparison_plot(y_train, y_test, y_pred, only_test=None):
     fig, axes = plt.subplots(1, 1, figsize=(10, 4)) # plt.sca(axes)
 
     GLOVE_CH = y_train.columns.tolist()
@@ -62,18 +62,38 @@ def get_signals_comparison_plot(y_train, y_test, y_pred):
     yticks = -np.arange(len(GLOVE_CH)) * 200
     lines, labels = [], []
 
-    p = plt.plot(y_train.index, y_train.values + yticks, c='C0')
-    plt.plot(y_test.index, y_test.values + yticks, c='C0')
-    lines += [p[0]]
-    labels += ['y_true']
+    # Display only test data
+    if only_test==1:
+        #p = plt.plot(y_train.index, y_train.values + yticks, c='C0')
+        p = plt.plot(y_test.index, y_test.values + yticks, c='C0')
+        lines += [p[0]]
+        labels += ['y_true']
 
-    p = plt.plot(y_train.index, y_train.values + yticks, c='C1', linestyle='-')
-    plt.plot(y_test.index, y_pred.values + yticks, c='C1', linestyle='-')
-    lines += [p[0]]
-    labels += ['y_pred']
-    plt.axvline(y_train.index.values[-1], color='k')
+        #p = plt.plot(y_train.index, y_train.values + yticks, c='C1', linestyle='-')
+        p = plt.plot(y_test.index, y_pred.values + yticks, c='C1', linestyle='-')
+        lines += [p[0]]
+        labels += ['y_pred']
+        plt.axvline(y_train.index.values[-1], color='k')
 
-    plt.yticks(yticks, GLOVE_CH)
-    plt.legend(lines, labels)
-    plt.suptitle(f'Gestures')
-    plt.tight_layout()
+        plt.yticks(yticks, GLOVE_CH)
+        plt.legend(lines, labels)
+        plt.suptitle(f'Gestures')
+        plt.tight_layout()
+     
+    # Display only train and test data   
+    else:
+        p = plt.plot(y_train.index, y_train.values + yticks, c='C0')
+        plt.plot(y_test.index, y_test.values + yticks, c='C0')
+        lines += [p[0]]
+        labels += ['y_true']
+
+        p = plt.plot(y_train.index, y_train.values + yticks, c='C1', linestyle='-')
+        plt.plot(y_test.index, y_pred.values + yticks, c='C1', linestyle='-')
+        lines += [p[0]]
+        labels += ['y_pred']
+        plt.axvline(y_train.index.values[-1], color='k')
+
+        plt.yticks(yticks, GLOVE_CH)
+        plt.legend(lines, labels)
+        plt.suptitle(f'Gestures')
+        plt.tight_layout()
