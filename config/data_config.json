@@ -12,7 +12,7 @@
   "PATH_BEST_MODEL": "/models/",
 
   "//": "Set seed value",
-  "seed_value" : 0,
+  "seed_value" : 32,
 
   "//": "Параметры для подготовки данных в mne",
   "points" : 1000.0,
