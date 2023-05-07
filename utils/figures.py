@@ -51,7 +51,7 @@ def get_all_sensors_plot(id:int, X_train:pd.DataFrame, plot_counter:int=None):
         
     fig.update_layout(title=dict(text=f'Рис. {plot_counter} - Sensor signals <br> for the test ' + str(id), x=.5, y=0.08, xanchor='center'))
 
-def get_free_movements_plot(X_train:pd.DataFrame, y_train:pd.DataFrame):
+def get_signals_plot(X_train:pd.DataFrame, y_train:pd.DataFrame):
     """Displays free movements plot (done with no protocol)
 
     Args:
