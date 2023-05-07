@@ -59,6 +59,7 @@ def get_free_movements_plot(X_train:pd.DataFrame, y_train:pd.DataFrame):
         y_train (pd.DataFrame): targets (6 dependent variables)
     """    
     GLOVE_CH1 = y_train.columns.tolist()
+    #GLOVE_CH1 = GLOVE_CH1[:-1]  # Limit sensors number to 5
     
     fig, ax = plt.subplots(2, 1, sharex=True, figsize=(12, 6))
     plt.sca(ax[0])

@@ -34,8 +34,10 @@ def get_mse(y_test:pd.DataFrame, y_pred:pd.DataFrame, GLOVE_CH=config.GLOVE_CH):
     ---------
     y_test(pd.DataFrame) - target values from the test sample 
     y_pred(pd.DataFrame) - predictions
+    GLOVE_CH (list) - target names
     ------
-    """    
+    """
+    GLOVE_CH = GLOVE_CH[:-1]  # Limit sensors number to 5
     metrics_test = pd.Series({col : mean_squared_error(y_test[col], y_pred[col]) for col in GLOVE_CH})
 
     print('MSE metrics for Test: \n--------')
