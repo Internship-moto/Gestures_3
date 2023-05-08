@@ -51,29 +51,33 @@ def get_all_sensors_plot(id:int, X_train:pd.DataFrame, plot_counter:int=None):
         
     fig.update_layout(title=dict(text=f'Рис. {plot_counter} - Sensor signals <br> for the test ' + str(id), x=.5, y=0.08, xanchor='center'))
 
-def get_signals_plot(X_train:pd.DataFrame, y_train:pd.DataFrame):
+def get_signals_plot(X_train:pd.DataFrame, y_train:pd.DataFrame, title:str=None):
     """Displays free movements plot (done with no protocol)
 
     Args:
         X_train (pd.DataFrame): Train data
         y_train (pd.DataFrame): targets (6 dependent variables)
+        title (str): chart title
     """    
     GLOVE_CH1 = y_train.columns.tolist()
     #GLOVE_CH1 = GLOVE_CH1[:-1]  # Limit sensors number to 5
     
+    dist = -np.arange(len(GLOVE_CH1)) * 200 # display distanced labels
+    
     fig, ax = plt.subplots(2, 1, sharex=True, figsize=(12, 6))
-    plt.sca(ax[0])
-    plt.plot(X_train.index, X_train.values) # можно заменить на gestures_train['ts'].values
-    plt.title('OMG')
+    ax[0].plot(X_train) # можно заменить на gestures_train['ts'].values
+    ax[0].set_title('OMG')
 
-    plt.sca(ax[1])
-    plt.plot(X_train.index, y_train - np.arange(len(GLOVE_CH1)) * 200) #gestures_train[GLOVE_CH].values
-    plt.yticks(-np.arange(len(GLOVE_CH1)) * 200, GLOVE_CH1)
-    plt.title('Glove')
-    plt.xlabel('Timesteps')
-
-    fig.suptitle('Free movements')
+    ax[1].plot(y_train + dist) #gestures_train[GLOVE_CH].values
+    plt.yticks(dist, GLOVE_CH1)
+    ax[1].set_title('Glove')
+    ax[1].set_xlabel('Timesteps')
+    
+    if title is not None:
+        fig.suptitle(title, fontsize=14)
+        
     fig.tight_layout()
+
     
     
 
