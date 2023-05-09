@@ -45,7 +45,11 @@
   "ACC_CH": ["ACC0", "ACC1", "ACC2"],
   "GYR_CH" : ["GYR0", "GYR1", "GYR2"],
   "GLOVE_CH": ["ENC0", "ENC1", "ENC2", "ENC3", "ENC4", "ENC5"],
-  "BUTTON_SYNC_TS_CH" : ["BUTTON", "SYNC", "ts"]
+  "BUTTON_SYNC_TS_CH" : ["BUTTON", "SYNC", "ts"],
+
+  "//": "Preprocessing",
+  "window_length":60,
+  "polyorder":4
   
 }
   
