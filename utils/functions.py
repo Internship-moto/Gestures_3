@@ -8,8 +8,10 @@ from dotmap import DotMap
 import pandas as pd
 
 from sklearn.metrics import mean_squared_error
-
 from scipy.signal import savgol_filter, filtfilt, butter
+import tensorflow as tf
+import numpy as np
+import random
 
 # библиотека взаимодействия с интерпретатором
 if not sys.warnoptions:
@@ -85,23 +87,43 @@ def preprocessing_1(b:int, a:float, col:pd.Series) -> pd.Series:
     bb, aa = butter(b, a)
     return filtfilt(bb, aa, col)
 
-# def get_id_from_data():
-#     """Функция загрузки номеров пилотов из данных в папке data
+def reset_random_seeds(seed_value=config.seed_value):
+    """Функция задания seed
+    """
+    os.environ['PYTHONHASHSEED'] = str(seed_value)
+    tf.random.set_seed(seed_value)
+    np.random.seed(seed_value)
+    random.seed(seed_value)
 
-#     Returns:
-#         id_pilot_numb_list (_int_): список с номерами пилотов
-#     """    
-#     id_pilot_numb_list = [] 
-#     pattern = r'\d+'
-#     pattern_2 = 'y_train_'
 
-#     X_train_list = glob.glob('data/X_train_*.npy')
-#     files_list = os.listdir('data')
+def callbacks(lr):
+   
+    # сохранение лучшей модели
+    checkpoint = tf.keras.callbacks.ModelCheckpoint(
+        os.path.join(config.PATH_MODEL, 'best_model' +'.hdf5'), 
+        monitor=config.monitor, 
+        verbose=1, 
+        mode=config.mode, 
+        save_best_only=True
+    )
+
+    # остановка обучения при отсутствии улучшения заданной метрики
+    earlystop = tf.keras.callbacks.EarlyStopping(
+        monitor=config.monitor, 
+        mode=config.mode, 
+        patience=config.callback_patience, 
+        restore_best_weights=True
+    )
+
+    # снижение learning rate при отсутствии улучшения заданной метрики 
+    reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
+        monitor=config.monitor, 
+        mode=config.mode,  
+        factor=0.5, 
+        patience=20,  # можно 10
+        verbose=1, 
+        min_lr=lr/1000
+    )
     
-#     for item in X_train_list:
-#         id_pilot_num = re.search(pattern, item)[0]
-#         if pattern_2 + id_pilot_num + '.npy' in files_list:
-#             id_pilot_numb_list.append(int(id_pilot_num))
-    
-#     return id_pilot_numb_list
+    return [checkpoint, earlystop, reduce_lr]
 
