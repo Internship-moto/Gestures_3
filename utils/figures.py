@@ -128,9 +128,51 @@ def get_signals_comparison_plot(y_train:pd.DataFrame, y_test:pd.DataFrame, y_pre
         plt.plot(y_test.index, y_pred.values + yticks, c='C1', linestyle='-')
         lines += [p[0]]
         labels += ['y_pred']
-        plt.axvline(y_train.index.values[-1], color='k')
+        plt.axvline(y_train.index.values[-1], color='k') # displays the boundary between trains and tests values
 
         plt.yticks(yticks, GLOVE_CH)
         plt.legend(lines, labels)
         plt.suptitle(f'Gestures')
         plt.tight_layout()
+        
+        
+def plot_history(history, plot_counter:int=None):
+    """Функция визуализации процесса обучения модели.
+    Аргументы:
+    history (history) - история обучения модели,
+    plot_counter (int) - порядковый номер рисунка.      
+    """
+    mse_metric = history.history['mse'] 
+    mse_val = history.history['val_mse']  # на валидационной выборке 
+    
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+
+    epochs = range(len(mse_metric))
+
+    # визуализация систем координат
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(11, 4))
+
+    ax[0].plot(epochs, loss, 'b', label='Training loss')
+    ax[0].plot(epochs, val_loss, 'r', label='Validation loss')
+    ax[0].set_xlabel('Epoch', size=11)
+    ax[0].set_ylabel('Loss', size=11)
+    ax[0].set_title('Training and validation loss')
+    ax[0].legend()
+
+    ax[1].plot(epochs, mse_metric, 'b', label='Training MSE')
+    ax[1].plot(epochs, mse_val, 'r', label='Validation MSE')
+    ax[1].set_xlabel('Epoch', size=11)
+    ax[1].set_ylabel('MSE value', size=11)
+    ax[1].set_title(f"Training and validation MSE")
+    ax[1].legend()
+
+    
+    if plot_counter is not None:
+        fig.suptitle(f"Fig.{plot_counter} - Model learning", y=-0.1, fontsize=14)
+        fig.write_image(f'../figures/fig_{plot_counter}.png', engine="kaleido") #savefig(...)
+    else: 
+        plot_counter = 1
+        fig.suptitle(f"Fig.{plot_counter} - Model learning", y=-0.1, fontsize=14)
+ 
+    # fig.show(); #- не вызывать для корретного логгирования
