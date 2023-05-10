@@ -27,10 +27,23 @@ from utils.figures import get_all_sensors_plot  #get_sensor_command_plot
 # import constants from the config
 config = config_reader('../config/data_config.json') 
 
+def add_diff(arr:np.array, shift_=1)-> np.array:
+    """Concatenation of a array values with shifted by a given step values.
 
+    Args:
+        arr (np.array): exhisting array
+        shift_ (int, optional): shift of a rolling window. Defaults to 1.
 
-def get_mse(y_test:pd.DataFrame, y_pred:pd.DataFrame, 
-            y_train:pd.DataFrame=None, y_pred_train:pd.DataFrame=None, GLOVE_CH=config.GLOVE_CH, displays_train_test:int=False):
+    Returns:
+        (np.array): concatenated array
+    """    
+    diff_arr = np.vstack([np.zeros((shift_, arr.shape[1])), (arr-np.roll(arr, shift_, axis=0))[shift_:]])
+    return np.hstack([arr, diff_arr])
+
+def get_mse(y_test:pd.DataFrame, 
+            y_pred:pd.DataFrame, 
+            y_train:pd.DataFrame=None, 
+            y_pred_train:pd.DataFrame=None, GLOVE_CH=config.GLOVE_CH, displays_train_test:int=False):
     """Display MSE metrics for the test sample
     
     Arguments:
