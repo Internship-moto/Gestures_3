@@ -24,7 +24,7 @@
 
 
 ## Data and methods
-[Репозиторий задания](https://github.com/MaxBalashov/motorica-x-skillfactory-internship/tree/main/Sprint%202) и [описание задачи от Моторики](https: )
+[Репозиторий задания](https://github.com/MaxBalashov/motorica-x-skillfactory-internship/tree/main/Sprint%202) и [описание задачи от Моторики](https://docs.google.com/document/d/19GRheCcc2RBV-TcyIPcbsEt9YQwhPwTsJFT2dJGmpY8/ )
 
 
 **Задача**
