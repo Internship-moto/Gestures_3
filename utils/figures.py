@@ -51,25 +51,26 @@ def get_all_sensors_plot(id:int, X_train:pd.DataFrame, plot_counter:int=None):
         
     fig.update_layout(title=dict(text=f'Рис. {plot_counter} - Sensor signals <br> for the test ' + str(id), x=.5, y=0.08, xanchor='center'))
 
-def get_signals_plot(X_train:pd.DataFrame, y_train:pd.DataFrame, title:str=None):
+def get_signals_plot(X_train:np.array, y_train:np.array, GLOVE_CH=config.GLOVE_CH, title:str=None):
     """Displays free movements plot (done with no protocol)
 
     Args:
-        X_train (pd.DataFrame): Train data
-        y_train (pd.DataFrame): targets (6 dependent variables)
+        X_train (np.array): Train data
+        y_train (np.array): targets. Default: 6 dependent variables
+        GLOVE_CH (list) - target names
         title (str): chart title
     """    
-    GLOVE_CH1 = y_train.columns.tolist()
-    #GLOVE_CH1 = GLOVE_CH1[:-1]  # Limit sensors number to 5
+
+    #GLOVE_CH = GLOVE_CH[:-1]  # Limit sensors number to 5
     
-    dist = -np.arange(len(GLOVE_CH1)) * 200 # display distanced labels
+    dist = np.arange(len(GLOVE_CH)) * 200 # display distanced labels
+    y_train = pd.DataFrame(np.subtract(y_train, dist), columns=GLOVE_CH)
     
     fig, ax = plt.subplots(2, 1, sharex=True, figsize=(12, 6))
     ax[0].plot(X_train) # можно заменить на gestures_train['ts'].values
     ax[0].set_title('OMG')
-
-    ax[1].plot(y_train + dist) #gestures_train[GLOVE_CH].values
-    plt.yticks(dist, GLOVE_CH1)
+    ax[1].plot(y_train) #gestures_train[GLOVE_CH].values
+    plt.yticks(-dist, GLOVE_CH)
     ax[1].set_title('Glove')
     ax[1].set_xlabel('Timesteps')
     
@@ -81,65 +82,69 @@ def get_signals_plot(X_train:pd.DataFrame, y_train:pd.DataFrame, title:str=None)
     
     
 
-def get_signals_comparison_plot(y_train:pd.DataFrame, y_test:pd.DataFrame, y_pred:pd.DataFrame, only_test:int=None):
+def get_signals_comparison_plot(y_train:np.array, y_test:np.array, y_pred:np.array, GLOVE_CH=config.GLOVE_CH, only_test:bool=True):
     """Displays test and predicted data on the same plot
 
     Args:
-        y_train (pd.DataFrame): targets (dependent variables) of the train sample
-        y_test  (pd.DataFrame): targets (dependent variables) of the test sample
-        y_pred  (pd.DataFrame): predicted values for the test sample
+        y_train (np.array): targets (dependent variables) of the train sample
+        y_test  (np.array): targets (dependent variables) of the test sample
+        y_pred  (np.array): predicted values for the test sample
+        GLOVE_CH (list) - target names
         only_test (int, optional): a lable for displaying the given dataset [0,1]. 
                                 Defaults to None and displays train and test data, 1 - display only test data
+        
     """    
     fig, axes = plt.subplots(1, 1, figsize=(10, 4)) # plt.sca(axes)
 
-    GLOVE_CH = y_train.columns.tolist()
+    GLOVE_CH = GLOVE_CH[:-1]
     
     # Слагаемые для разделения показаний датчиков
-    yticks = -np.arange(len(GLOVE_CH)) * 200
+    yticks = np.arange(len(GLOVE_CH)) * 200
     lines, labels = [], []
-
+    indexes = np.arange(y_test.shape[0])
+    
     # Display only test data
-    if only_test==1:
-        #p = plt.plot(y_train.index, y_train.values + yticks, c='C0')
-        p = plt.plot(y_test.index, y_test.values + yticks, c='C0')
+    if only_test is True:
+
+        p = plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_test, yticks), c='C0')
         lines += [p[0]]
         labels += ['y_true']
 
         #p = plt.plot(y_train.index, y_train.values + yticks, c='C1', linestyle='-')
-        p = plt.plot(y_test.index, y_pred.values + yticks, c='C1', linestyle='-')
+        p = plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_pred, yticks), c='C1', linestyle='-')
         lines += [p[0]]
         labels += ['y_pred']
-        plt.axvline(y_train.index.values[-1], color='k')
+        plt.axvline(y_train.shape[0] , color='k')
 
-        plt.yticks(yticks, GLOVE_CH)
+        plt.yticks(-yticks, GLOVE_CH)
         plt.legend(lines, labels)
         plt.suptitle(f'Gestures')
         plt.tight_layout()
      
-    # Display only train and test data   
+    # Display train and test data   
     else:
-        p = plt.plot(y_train.index, y_train.values + yticks, c='C0')
-        plt.plot(y_test.index, y_test.values + yticks, c='C0')
+        p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C0')
+        plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_test, yticks), c='C0')
         lines += [p[0]]
         labels += ['y_true']
 
-        p = plt.plot(y_train.index, y_train.values + yticks, c='C1', linestyle='-')
-        plt.plot(y_test.index, y_pred.values + yticks, c='C1', linestyle='-')
+        p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C1', linestyle='-')
+        plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_pred, yticks), c='C1', linestyle='-')
         lines += [p[0]]
         labels += ['y_pred']
-        plt.axvline(y_train.index.values[-1], color='k') # displays the boundary between trains and tests values
+        plt.axvline(y_train.shape[0], color='k') # displays the boundary between trains and tests values
 
-        plt.yticks(yticks, GLOVE_CH)
+        plt.yticks(-yticks, GLOVE_CH)
         plt.legend(lines, labels)
         plt.suptitle(f'Gestures')
         plt.tight_layout()
         
         
-def plot_history(history, plot_counter:int=None):
+def plot_history(history, title:str=None, plot_counter:int=None):
     """Функция визуализации процесса обучения модели.
     Аргументы:
-    history (history) - история обучения модели,
+    history (keras.callbacks.History) - история обучения модели,
+    title (str) - figure title. Use: model.name
     plot_counter (int) - порядковый номер рисунка.      
     """
     mse_metric = history.history['mse'] 
@@ -169,10 +174,12 @@ def plot_history(history, plot_counter:int=None):
 
     
     if plot_counter is not None:
-        fig.suptitle(f"Fig.{plot_counter} - Model learning", y=-0.1, fontsize=14)
-        fig.write_image(f'../figures/fig_{plot_counter}.png', engine="kaleido") #savefig(...)
+        plt.suptitle(f"Fig.{plot_counter} - Model learning",  fontsize=14) # y=-0.1,
+        plt.write_image(f'../figures/fig_{plot_counter}.png', engine="kaleido") #savefig(...)
+    
     else: 
         plot_counter = 1
-        fig.suptitle(f"Fig.{plot_counter} - Model learning", y=-0.1, fontsize=14)
+        plt.suptitle(f"Fig.{plot_counter} - {title} learning", y=1, fontsize=14) # y=-0.1,
+
  
     # fig.show(); #- не вызывать для корретного логгирования
