@@ -64,13 +64,14 @@ def get_signals_plot(X_train:np.array, y_train:np.array, GLOVE_CH=config.GLOVE_C
     #GLOVE_CH = GLOVE_CH[:-1]  # Limit sensors number to 5
     
     dist = np.arange(len(GLOVE_CH)) * 200 # display distanced labels
-    y_train = pd.DataFrame(np.subtract(y_train, dist), columns=GLOVE_CH)
+    #y_train = np.subtract(y_train, dist)
     
     fig, ax = plt.subplots(2, 1, sharex=True, figsize=(12, 6))
     ax[0].plot(X_train) # можно заменить на gestures_train['ts'].values
     ax[0].set_title('OMG')
     ax[1].plot(y_train) #gestures_train[GLOVE_CH].values
-    plt.yticks(-dist, GLOVE_CH)
+    plt.yticks(dist, GLOVE_CH)
+    #plt.yticks()#GLOVE_CH,  np.subtract(y_train, dist)
     ax[1].set_title('Glove')
     ax[1].set_xlabel('Timesteps')
     
