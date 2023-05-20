@@ -61,19 +61,16 @@ def get_signals_plot(X_train:np.array, y_train:np.array, GLOVE_CH=config.GLOVE_C
         title (str): chart title
     """    
 
-    #GLOVE_CH = GLOVE_CH[:-1]  # Limit sensors number to 5
-    
-    dist = np.arange(len(GLOVE_CH)) * 200 # display distanced labels
-    #y_train = np.subtract(y_train, dist)
-    
+    GLOVE_CH = GLOVE_CH[:-1]  # Limit sensors number to 5
+    dist = - np.arange(len(GLOVE_CH)) * 200 # display distanced labels
+
     fig, ax = plt.subplots(2, 1, sharex=True, figsize=(12, 6))
-    ax[0].plot(X_train) # можно заменить на gestures_train['ts'].values
+    ax[0].plot(X_train)
     ax[0].set_title('OMG')
-    ax[1].plot(y_train) #gestures_train[GLOVE_CH].values
-    plt.yticks(dist, GLOVE_CH)
-    #plt.yticks()#GLOVE_CH,  np.subtract(y_train, dist)
+    ax[1].plot(y_train + dist)  
+    ax[1].yaxis.set_ticks(dist, labels=GLOVE_CH)
     ax[1].set_title('Glove')
-    ax[1].set_xlabel('Timesteps')
+
     
     if title is not None:
         fig.suptitle(title, fontsize=14)
