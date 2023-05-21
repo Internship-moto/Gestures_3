@@ -67,8 +67,63 @@ def get_mse(y_test:np.array,
         display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
         
     
- 
- #-------- preprocessing-------------
+def get_nogo(df:np.array)->np.array:
+    """Gets 'nogo' condition from all sensors
+
+    Args:
+        df (np.array): _description_
+
+    Returns:
+        np.array: _description_
+    """   
+    # Get diff for all sensors . Shape = (28975, 5) 
+    nogo = np.diff(df, axis=0) 
+
+    # Get changes vector. Shape = (28975, 1)
+    Nogo = np.sum(np.abs(nogo), axis=1)#, keepdims=True
+    
+    return np.where(Nogo>1,1,0)
+
+def postporocessing_nogo(arr:np.array)->np.array:
+    """Delete sponatious single peaks from the given array
+    Args:
+        arr (np.array): data array
+    Returns:
+        np.array: _description_
+    """
+    # initial value
+    i = 0
+
+    for i in range(len(arr)):
+        
+        step = arr[i:i+4]
+        try:
+            # case [0,0,0,0] or [1,1,1,1]. Смещаемся на 1 элемент вправо
+            if step[3]==step[2]: 
+                i+=1 
+                #step = arr[i:i+4]
+                
+            # case [0,0,0,1]. Смещаемся на 2 элемента вправо
+            else:
+                i+=2
+                step = arr[i:i+4]
+                
+                #case [1,0,0,0]
+                if step[1]==step[2]==step[3]:
+                    step[0]==step[1]
+                    i+=1
+                
+                #case [1,0,1,0] and [1,0,1,1]
+                else:  
+                    step[1]=step[0]
+                    i+=1
+        except:
+            break
+    
+    return arr
+            
+
+#-------- preprocessing-------------
  
  
 def preprocessing_0(col:pd.Series, window_length:int=config.window_length, polyorder:int=config.polyorder) -> pd.Series:
