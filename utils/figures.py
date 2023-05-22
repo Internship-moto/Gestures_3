@@ -14,10 +14,65 @@ import sys
 # Import custom functions
 sys.path.insert(1, '../')
 
-from utils.functions import config_reader
+from utils.functions import config_reader#, get_nogo, postporocessing_nogo
 
 # import constants from the config
 config = config_reader('../config/data_config.json') 
+
+def get_nogo(df:np.array)->np.array:
+    """Gets 'nogo' condition from all sensors
+
+    Args:
+        df (np.array): _description_
+
+    Returns:
+        np.array: _description_
+    """   
+    # Get diff for all sensors . Shape = (28975, 5) 
+    nogo = np.diff(df, axis=0) 
+
+    # Get changes vector. Shape = (28975, 1)
+    Nogo = np.sum(np.abs(nogo), axis=1)#, keepdims=True
+    
+    return np.where(Nogo>1,1,0)
+
+def postporocessing_nogo(arr:np.array)->np.array:
+    """Delete sponatious single peaks from the given array
+    Args:
+        arr (np.array): data array
+    Returns:
+        np.array: _description_
+    """
+    # initial value
+    i = 0
+
+    for i in range(len(arr)):
+        
+        step = arr[i:i+4]
+        try:
+            # case [0,0,0,0] or [1,1,1,1]. Смещаемся на 1 элемент вправо
+            if step[3]==step[2]: 
+                i+=1 
+                #step = arr[i:i+4]
+                
+            # case [0,0,0,1]. Смещаемся на 2 элемента вправо
+            else:
+                i+=2
+                step = arr[i:i+4]
+                
+                #case [1,0,0,0]
+                if step[1]==step[2]==step[3]:
+                    step[0]==step[1]
+                    i+=1
+                
+                #case [1,0,1,0] and [1,0,1,1]
+                else:  
+                    step[1]=step[0]
+                    i+=1
+        except:
+            break
+    
+    return arr
 
 
 def get_all_sensors_plot(id:int, X_train:pd.DataFrame, plot_counter:int=None):
@@ -77,7 +132,35 @@ def get_signals_plot(X_train:np.array, y_train:np.array, GLOVE_CH=config.GLOVE_C
         
     fig.tight_layout()
 
-    
+
+
+def get_nogo_plot(y_train:np.array, limits:tuple, GLOVE_CH:list=config.GLOVE_CH):
+    """Displays nogo status chart
+
+    Args:
+        y_train (np.array): targets. Default: 5 dependent variables
+        low_lim (int): low limit
+        high_lim (int): high limit
+        GLOVE_CH (list, optional): Target names list. Defaults to config.GLOVE_CH.
+    """    
+    GLOVE_CH = GLOVE_CH[:-1]
+    low_lim, high_lim = limits[0], limits[1]
+    dist = -np.arange(5)*200
+
+    fig, ax = plt.subplots(3, 1, sharex=True, figsize=(10, 6)) 
+    ax[0].plot(np.arange(low_lim, high_lim), y_train[low_lim:high_lim] + dist)  
+    ax[0].yaxis.set_ticks(dist, GLOVE_CH) 
+    ax[0].set_title('Glove')
+
+    ax[1].plot(np.arange(low_lim, high_lim), get_nogo(y_train)[low_lim:high_lim])
+    ax[1].set_title('Nogo')
+    ax[1].yaxis.set_ticks(np.linspace(0,1,2))
+
+    ax[2].plot(np.arange(low_lim, high_lim), postporocessing_nogo(get_nogo(y_train))[low_lim:high_lim])
+    ax[2].set_title('Nogo postprocessed')
+    ax[2].yaxis.set_ticks(np.linspace(0,1,2));
+
+   
     
 
 def get_signals_comparison_plot(y_train:np.array, y_test:np.array, y_pred:np.array, GLOVE_CH=config.GLOVE_CH, only_test:bool=True):
