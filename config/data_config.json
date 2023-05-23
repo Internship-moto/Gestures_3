@@ -54,7 +54,10 @@
   "//": "Modelling",
   "monitor": "val_mse",
   "mode": "min",
-  "callback_patience" : 50
+  "callback_patience" : 50,
+
+  "//": "new entries"
+
 
 
 }
