@@ -154,11 +154,11 @@ def get_nogo_plot(y_train:np.array, limits:tuple, GLOVE_CH:list=config.GLOVE_CH)
 
     ax[1].plot(np.arange(low_lim, high_lim), get_nogo(y_train)[low_lim:high_lim])
     ax[1].set_title('Nogo')
-    ax[1].yaxis.set_ticks(np.linspace(0,1,2))
+    ax[1].yaxis.set_ticks(np.linspace(0,1,2), ['Nogo', 'Go'])
 
     ax[2].plot(np.arange(low_lim, high_lim), postporocessing_nogo(get_nogo(y_train))[low_lim:high_lim])
     ax[2].set_title('Nogo postprocessed')
-    ax[2].yaxis.set_ticks(np.linspace(0,1,2));
+    ax[2].yaxis.set_ticks(np.linspace(0,1,2), ['Nogo', 'Go']);
 
    
     
