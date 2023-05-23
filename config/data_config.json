@@ -56,9 +56,8 @@
   "mode": "min",
   "callback_patience" : 50,
 
-  "//": "new entries"
-
-
+  "//": "new entries",
+  "scaler_name":"MinMax_scaler.bin"
 
 }
   
