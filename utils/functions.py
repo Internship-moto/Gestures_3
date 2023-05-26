@@ -27,6 +27,60 @@ from utils.figures import get_all_sensors_plot  #get_sensor_command_plot
 # import constants from the config
 config = config_reader('../config/data_config.json') 
 
+def read_omg_csv(path_palm_data: str, 
+                 n_omg_channels: int, 
+                 n_acc_channels: int = 0, 
+                 n_gyr_channels: int = 0, 
+                 n_mag_channels: int = 0, 
+                 n_enc_channels: int = 0,
+                 button_ch: bool = True, 
+                 sync_ch: bool = True, 
+                 timestamp_ch: bool = True) -> pd.DataFrame:
+    
+    '''
+    Reads CSV data for OMG data
+    NB: data must be separated by " " separator
+
+        Parameters:
+                path_palm_data  (str): path to csv data file
+                n_omg_channels  (int): Number of OMG channels
+                n_acc_channels  (int): Number of Accelerometer channels, default = 0
+                n_gyr_channels  (int): Number of Gyroscope channels, default = 0
+                n_mag_channels  (int): Number of Magnetometer channels, default = 0
+                n_enc_channels  (int): Number of Encoder channels, default = 0
+                button_ch      (bool): If button channel is present, default = True
+                sync_ch        (bool): If synchronization channel is present, default = True
+                timestamp_ch   (bool): If timestamp channel is present, default = True
+
+        Returns:
+                df_raw (pd.DataFrame): Parsed pandas Dataframe with OMG data
+    '''
+    
+    df_raw = pd.read_csv(path_palm_data, sep=' ', 
+                         header=None, 
+                         skipfooter=1, 
+                         skiprows=1, 
+                         engine='python')
+    columns = np.arange(n_omg_channels).astype('str').tolist()
+    
+    for label, label_count in zip(['ACC', 'GYR', 'MAG', 'ENC'], 
+                                  [n_acc_channels, n_gyr_channels, n_mag_channels, n_enc_channels]):
+        columns = columns + ['{}{}'.format(label, i) for i in range(label_count)]
+        
+    if button_ch:
+        columns = columns + ['BUTTON']
+        
+    if sync_ch:
+        columns = columns + ['SYNC']
+        
+    if timestamp_ch:
+        columns = columns + ['ts']
+        
+    df_raw.columns = columns
+    
+    return df_raw
+
+
 def add_diff(arr:np.array, shift_=1)-> np.array:
     """Concatenation of a array values with shifted by a given step values.
 
@@ -108,11 +162,11 @@ def reset_random_seeds(seed_value=config.seed_value):
     random.seed(seed_value)
 
 
-def callbacks(lr):
+def callbacks(lr:float, model_name:str):
    
     # сохранение лучшей модели
     checkpoint = tf.keras.callbacks.ModelCheckpoint(
-        os.path.join(config.PATH_MODEL, 'best_model' +'.hdf5'), 
+        os.path.join(config.PATH_MODEL + model_name +'.hdf5'), 
         monitor=config.monitor, 
         verbose=1, 
         mode=config.mode, 
