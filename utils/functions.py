@@ -96,8 +96,9 @@ def add_diff(arr:np.array, shift_=1)-> np.array:
 
 def get_mse(y_test:np.array, 
             y_pred:np.array, 
-            y_train:np.array=None, 
-            y_pred_train:np.array=None, GLOVE_CH=config.GLOVE_CH, displays_train_test:int=False):
+            #y_train:np.array=None, 
+            #y_pred_train:np.array=None, 
+            GLOVE_CH=config.GLOVE_CH, displays_train_test:int=False):
     """Display MSE metrics for the test sample
     
     Arguments:
@@ -111,14 +112,17 @@ def get_mse(y_test:np.array,
     ------
     """
     GLOVE_CH = GLOVE_CH[:-1]  # Limit sensors number to 5
-    metrics_test = np.array([mean_squared_error(y_test[:,col], y_pred[:,col]) for col in range(y_test.shape[1])]) # for Numpy
     
-    if y_train is not None and y_pred_train is not None:
-        metrics_train = np.array([mean_squared_error(y_train[:,col], y_pred_train[:,col]) for col in range(y_train.shape[1])])
-        display(pd.DataFrame({'Train':metrics_train, 'Test': metrics_test}, index=GLOVE_CH))
+    metrics_test = np.array([mean_squared_error(y_test[:,col] * 100, y_pred[:,col]) for col in range(len(GLOVE_CH))]) # for Numpy
+    
+    display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
+    
+    # if y_train is not None and y_pred_train is not None:
+    #     metrics_train = np.array([mean_squared_error(y_train[:,col], y_pred_train[:,col]) for col in range(y_train.shape[1])])
+    #     display(pd.DataFrame({'Train':metrics_train, 'Test': metrics_test}, index=GLOVE_CH))
         
-    else:
-        display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
+    # else:
+    #     display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
         
     
 
