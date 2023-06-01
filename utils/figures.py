@@ -163,7 +163,10 @@ def get_nogo_plot(y_train:np.array, limits:tuple, GLOVE_CH:list=config.GLOVE_CH)
    
     
 
-def get_signals_comparison_plot(y_train:np.array, y_test:np.array, y_pred:np.array, GLOVE_CH=config.GLOVE_CH, only_test:bool=True):
+def get_signals_comparison_plot(
+    #y_train:np.array, 
+    y_test:np.array, y_pred:np.array, 
+    GLOVE_CH=config.GLOVE_CH, only_test:bool=True):
     """Displays test and predicted data on the same plot
 
     Args:
@@ -175,9 +178,10 @@ def get_signals_comparison_plot(y_train:np.array, y_test:np.array, y_pred:np.arr
                                 Defaults to None and displays train and test data, 1 - display only test data
         
     """    
-    fig, axes = plt.subplots(1, 1, figsize=(10, 4)) # plt.sca(axes)
+    fig, ax = plt.subplots(1, 1, figsize=(10, 4)) # plt.sca(axes)
 
     GLOVE_CH = GLOVE_CH[:-1]
+    y_test = y_test * 100 # multiplication of test values
     
     # Слагаемые для разделения показаний датчиков
     yticks = np.arange(len(GLOVE_CH)) * 200
@@ -187,38 +191,43 @@ def get_signals_comparison_plot(y_train:np.array, y_test:np.array, y_pred:np.arr
     # Display only test data
     if only_test is True:
 
-        p = plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_test, yticks), c='C0')
+        p = plt.plot(indexes, np.subtract(y_test, yticks), c='C0')
         lines += [p[0]]
-        labels += ['y_true']
+        #labels += ['y_true']
 
-        #p = plt.plot(y_train.index, y_train.values + yticks, c='C1', linestyle='-')
-        p = plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_pred, yticks), c='C1', linestyle='-')
+        p = plt.plot(indexes, np.subtract(y_pred, yticks), c='C1', linestyle='-')
         lines += [p[0]]
-        labels += ['y_pred']
-        plt.axvline(y_train.shape[0] , color='k')
-
+        #labels += ['y_pred']
+        #plt.axvline(y_train.shape[0] , color='k')
+        
+        labels = ['y_true', 'y_pred']
+        major_ticks = np.linspace(0, round(y_test.shape[0], -3), (np.round(y_test.shape[0], -3)/1000).astype(np.int32)+1)
+        ax.set_xticks(major_ticks)
+        ax.xaxis.grid(linestyle='--')
         plt.yticks(-yticks, GLOVE_CH)
         plt.legend(lines, labels)
         plt.suptitle(f'Gestures')
-        plt.tight_layout()
+        plt.tight_layout();
      
     # Display train and test data   
     else:
-        p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C0')
-        plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_test, yticks), c='C0')
-        lines += [p[0]]
-        labels += ['y_true']
+        print('only_test must be True')
+        
+        # p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C0')
+        # plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_test, yticks), c='C0')
+        # lines += [p[0]]
+        # labels += ['y_true']
 
-        p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C1', linestyle='-')
-        plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_pred, yticks), c='C1', linestyle='-')
-        lines += [p[0]]
-        labels += ['y_pred']
-        plt.axvline(y_train.shape[0], color='k') # displays the boundary between trains and tests values
+        # p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C1', linestyle='-')
+        # plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_pred, yticks), c='C1', linestyle='-')
+        # lines += [p[0]]
+        # labels += ['y_pred']
+        # plt.axvline(y_train.shape[0], color='k') # displays the boundary between trains and tests values
 
-        plt.yticks(-yticks, GLOVE_CH)
-        plt.legend(lines, labels)
-        plt.suptitle(f'Gestures')
-        plt.tight_layout()
+        # plt.yticks(-yticks, GLOVE_CH)
+        # plt.legend(lines, labels)
+        # plt.suptitle(f'Gestures')
+        # plt.tight_layout()
         
         
 def plot_history(history, title:str=None, plot_counter:int=None):
@@ -264,3 +273,27 @@ def plot_history(history, title:str=None, plot_counter:int=None):
 
  
     # fig.show(); #- не вызывать для корретного логгирования
+    
+def web_plot(df:pd.DataFrame, GLOVE_CH:list=config.GLOVE_CH):
+    GLOVE_CH = GLOVE_CH[:-1]
+    # Number of variables we're plotting.
+    num_vars = len(GLOVE_CH)
+
+    # Split the circle into even parts and save the angles so we know where to put each axis.
+    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+    angles += angles[:1]
+
+    # ax = plt.subplot(polar=True)
+    fig, ax = plt.subplots(figsize=(7, 7), subplot_kw=dict(polar=True))
+        
+    for i in range(df.shape[1]):
+        
+        values = df.values[:,i].tolist() 
+        # The plot is a circle, so we need to "complete the loop" and append the start value to the end.
+        values += values[:1]
+        
+        ax.plot(angles, values, linewidth=1, label=df.columns[i]) #, color='red'
+        # Fill it in.
+        ax.fill(angles, values, alpha=0.75)# , color='red'
+        ax.set_thetagrids(np.array(angles[:-1]) * 180/np.pi, GLOVE_CH);
+        plt.legend();
