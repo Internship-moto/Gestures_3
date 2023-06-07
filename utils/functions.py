@@ -112,19 +112,19 @@ def get_mse(y_test:np.array,
     ------
     """
     GLOVE_CH = GLOVE_CH[:-1]  # Limit sensors number to 5
-    y_test = y_test * 100 # multiplication of test values
+    #y_test = y_test * 100 # multiplication of test values
     
     metrics_test = np.array([mean_squared_error(y_test[:,col], y_pred[:,col]) for col in range(len(GLOVE_CH))]).round(1) # for Numpy
     
     #display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
     
     if y_train is not None and y_pred_train is not None:
-        y_train = y_train * 100 # multiplication of test values
+        #y_train = y_train * 100 # multiplication of test values
         metrics_train = np.array([mean_squared_error(y_train[:,col], y_pred_train[:,col]) for col in range(y_train.shape[1])]).round(1)
         display(pd.DataFrame({'Train':metrics_train, 'Test': metrics_test}, index=GLOVE_CH))
         
     else:
-        display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
+        #display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
         return pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH)
         
     
