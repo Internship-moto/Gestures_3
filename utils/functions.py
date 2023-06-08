@@ -27,6 +27,9 @@ from utils.figures import get_all_sensors_plot  #get_sensor_command_plot
 # import constants from the config
 config = config_reader('../config/data_config.json') 
 
+ 
+OMG_CH = np.arange(50).tolist()
+
 def read_omg_csv(path_palm_data: str, 
                  n_omg_channels: int, 
                  n_acc_channels: int = 0, 
@@ -159,6 +162,86 @@ def preprocessing_1(b:int, a:float, col:pd.Series) -> pd.Series:
     """    
     bb, aa = butter(b, a)
     return filtfilt(bb, aa, col)
+
+
+
+def get_active_sensors(arr:np.array ):
+    # создаём список из активных сенсоров
+    sensors = list()
+    for i in range(len(OMG_CH)):
+        if np.mean(arr[:,i])>200:
+            sensors.append(i)
+    return sensors
+
+
+
+def get_means(df:np.array, sensors:list):
+    """get sensor means and std
+
+    Args:
+        df (pd.DataFrame): original dataframe
+        sensors (list, optional): sensor index. Defaults to sensors.
+
+    Returns:
+        (dict): dictionary with sensor means and stds
+    """    
+    ranges = dict() 
+
+    # словарь из данных активных сенсоров: среднее и ст. откл
+    for i in sensors:
+        ranges[i] = [np.mean(df[:,i]).round(5), np.std(df[:,i]).round()]
+    
+    return ranges
+
+
+def get_limits(arr, iqrs=None):
+    """ Replace outliers with +/- 1.5*Interquartile range
+
+    Args:
+        df (pd.DataFrame): _description_
+        iqrs (list, optional): _description_. Defaults to None.
+
+    Returns:
+        _type_: _description_
+    """    
+    # сохраняем пределы измерения
+    if iqrs is None : #or len(iqrs) == 0
+        iqrs = dict() 
+        
+        # Заменяем выбросы на нижнюю и верхнюю границу в цикле
+        for i in OMG_CH:
+            #i = int(i)
+            IQR  = np.quantile(arr[:,i], .75) - np.quantile(arr[:,i], .25)
+            low  = np.quantile(arr[:,i], .25) - 1.5*IQR
+            high = np.quantile(arr[:,i], .75) + 1.5*IQR
+            
+            # добавляем в список граничные значения сигналов
+            iqrs[i] = [low, high]
+            # Обрезка выбросов по границе окна
+            arr[:,i] = np.clip(arr[:,i], low, high)
+            
+        return arr, iqrs
+        
+    else:
+        #iqrs = iqrs
+    
+        # Заменяем выбросы на нижнюю и верхнюю границу в цикле
+        for i in OMG_CH:
+            #i = int(i)
+            #IQR =  IQR[i]
+            #low  = np.quantile(arr[:,i], .25) - 1.5*iqrs[i]
+            #high = np.quantile(arr[:,i], .75) + 1.5*iqrs[i]
+            
+            #low_limits.append(low)
+            #high_limits.append(high)
+
+            arr[:,i] = np.clip(arr[:,i], iqrs[i][0], iqrs[i][1])
+        
+    return arr
+
+
+
+
 
 def reset_random_seeds(seed_value=config.seed_value):
     """Функция задания seed
