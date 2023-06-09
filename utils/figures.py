@@ -181,7 +181,7 @@ def get_signals_comparison_plot(
     fig, ax = plt.subplots(1, 1, figsize=(10, 4)) # plt.sca(axes)
 
     GLOVE_CH = GLOVE_CH[:-1]
-    y_test = y_test * 100 # multiplication of test values
+    y_test = y_test  # multiplication of test values
     
     # Слагаемые для разделения показаний датчиков
     yticks = np.arange(len(GLOVE_CH)) * 200
