@@ -127,8 +127,8 @@ def get_mse(y_test:np.array,
         display(pd.DataFrame({'Train':metrics_train, 'Test': metrics_test}, index=GLOVE_CH))
         
     else:
-        #display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
-        return pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH)
+        display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
+        #return pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH)
         
     
 
@@ -194,7 +194,7 @@ def get_means(df:np.array, sensors:list):
     return ranges
 
 
-def get_limits(arr, iqrs=None):
+def get_limits(arr, limits=None):
     """ Replace outliers with +/- 1.5*Interquartile range
 
     Args:
@@ -205,8 +205,8 @@ def get_limits(arr, iqrs=None):
         _type_: _description_
     """    
     # сохраняем пределы измерения
-    if iqrs is None : #or len(iqrs) == 0
-        iqrs = dict() 
+    if limits is None : #or len(iqrs) == 0
+        limits = dict() 
         
         # Заменяем выбросы на нижнюю и верхнюю границу в цикле
         for i in OMG_CH:
@@ -216,26 +216,17 @@ def get_limits(arr, iqrs=None):
             high = np.quantile(arr[:,i], .75) + 1.5*IQR
             
             # добавляем в список граничные значения сигналов
-            iqrs[i] = [low, high]
+            limits[i] = [low, high]
             # Обрезка выбросов по границе окна
             arr[:,i] = np.clip(arr[:,i], low, high)
             
-        return arr, iqrs
+        return arr, limits
         
     else:
-        #iqrs = iqrs
     
         # Заменяем выбросы на нижнюю и верхнюю границу в цикле
         for i in OMG_CH:
-            #i = int(i)
-            #IQR =  IQR[i]
-            #low  = np.quantile(arr[:,i], .25) - 1.5*iqrs[i]
-            #high = np.quantile(arr[:,i], .75) + 1.5*iqrs[i]
-            
-            #low_limits.append(low)
-            #high_limits.append(high)
-
-            arr[:,i] = np.clip(arr[:,i], iqrs[i][0], iqrs[i][1])
+            arr[:,i] = np.clip(arr[:,i], limits[i][0], limits[i][1])
         
     return arr
 
