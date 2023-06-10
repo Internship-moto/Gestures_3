@@ -163,10 +163,10 @@ def get_nogo_plot(y_train:np.array, limits:tuple, GLOVE_CH:list=config.GLOVE_CH)
    
     
 
-def get_signals_comparison_plot(
-    #y_train:np.array, 
-    y_test:np.array, y_pred:np.array, 
-    GLOVE_CH=config.GLOVE_CH, only_test:bool=True):
+def get_signals_comparison_plot( 
+    y_test:np.array, y_pred:np.array,
+    y_train:np.array=None, y_pred_train:np.array=None, 
+    GLOVE_CH=config.GLOVE_CH): #, only_test:bool=True
     """Displays test and predicted data on the same plot
 
     Args:
@@ -189,7 +189,7 @@ def get_signals_comparison_plot(
     indexes = np.arange(y_test.shape[0])
     
     # Display only test data
-    if only_test is True:
+    if y_train is None:
 
         p = plt.plot(indexes, np.subtract(y_test, yticks), c='C0')
         lines += [p[0]]
@@ -201,7 +201,7 @@ def get_signals_comparison_plot(
         #plt.axvline(y_train.shape[0] , color='k')
         
         labels = ['y_true', 'y_pred']
-        major_ticks = np.linspace(0, round(y_test.shape[0], -3), (np.round(y_test.shape[0], -3)/1000).astype(np.int32)+1)
+        major_ticks = np.linspace(0, round(y_test.shape[0], -2), (np.round(y_test.shape[0], -3)/1000).astype(np.int32)+1)
         ax.set_xticks(major_ticks)
         ax.xaxis.grid(linestyle='--')
         plt.yticks(-yticks, GLOVE_CH)
@@ -211,23 +211,23 @@ def get_signals_comparison_plot(
      
     # Display train and test data   
     else:
-        print('only_test must be True')
+        #print('only_test must be True')
         
-        # p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C0')
-        # plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_test, yticks), c='C0')
-        # lines += [p[0]]
-        # labels += ['y_true']
+        p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C0')
+        plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_test, yticks), c='C0')
+        lines += [p[0]]
+        labels += ['y_true']
 
-        # p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C1', linestyle='-')
-        # plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_pred, yticks), c='C1', linestyle='-')
-        # lines += [p[0]]
-        # labels += ['y_pred']
-        # plt.axvline(y_train.shape[0], color='k') # displays the boundary between trains and tests values
+        p = plt.plot(np.arange(y_train.shape[0]), np.subtract(y_train, yticks), c='C1', linestyle='-')
+        plt.plot(y_train.shape[0] + np.arange(y_test.shape[0]), np.subtract(y_pred, yticks), c='C1', linestyle='-')
+        lines += [p[0]]
+        labels += ['y_pred']
+        plt.axvline(y_train.shape[0], color='k') # displays the boundary between trains and tests values
 
-        # plt.yticks(-yticks, GLOVE_CH)
-        # plt.legend(lines, labels)
-        # plt.suptitle(f'Gestures')
-        # plt.tight_layout()
+        plt.yticks(-yticks, GLOVE_CH)
+        plt.legend(lines, labels)
+        plt.suptitle(f'Gestures')
+        plt.tight_layout()
         
         
 def plot_history(history, title:str=None, plot_counter:int=None):
