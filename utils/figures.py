@@ -106,14 +106,17 @@ def get_all_sensors_plot(id:int, X_train:pd.DataFrame, plot_counter:int=None):
         
     fig.update_layout(title=dict(text=f'Рис. {plot_counter} - Sensor signals <br> for the test ' + str(id), x=.5, y=0.08, xanchor='center'))
 
-def get_signals_plot(X_train:np.array, y_train:np.array, GLOVE_CH=config.GLOVE_CH, title:str=None):
+
+def get_signals_plot(
+    X_train:np.array, y_train:np.array, GLOVE_CH=config.GLOVE_CH, title:str=None, plot_counter:int=None):
     """Displays free movements plot (done with no protocol)
 
     Args:
         X_train (np.array): Train data
         y_train (np.array): targets. Default: 6 dependent variables
         GLOVE_CH (list) - target names
-        title (str): chart title
+        title (str): figure title
+        plot_counter(int) - figure number
     """    
 
     GLOVE_CH = GLOVE_CH[:-1]  # Limit sensors number to 5
@@ -131,6 +134,9 @@ def get_signals_plot(X_train:np.array, y_train:np.array, GLOVE_CH=config.GLOVE_C
         fig.suptitle(title, fontsize=14)
         
     fig.tight_layout()
+    
+    if plot_counter is not None:
+        plt.savefig(f'../figures/fig_{plot_counter}.png')
 
 
 
@@ -166,7 +172,8 @@ def get_nogo_plot(y_train:np.array, limits:tuple, GLOVE_CH:list=config.GLOVE_CH)
 def get_signals_comparison_plot( 
     y_test:np.array, y_pred:np.array,
     y_train:np.array=None, y_pred_train:np.array=None, 
-    GLOVE_CH=config.GLOVE_CH): #, only_test:bool=True
+    GLOVE_CH=config.GLOVE_CH,
+    plot_counter:int=None): #, only_test:bool=True
     """Displays test and predicted data on the same plot
 
     Args:
@@ -174,8 +181,7 @@ def get_signals_comparison_plot(
         y_test  (np.array): targets (dependent variables) of the test sample
         y_pred  (np.array): predicted values for the test sample
         GLOVE_CH (list) - target names
-        only_test (int, optional): a lable for displaying the given dataset [0,1]. 
-                                Defaults to None and displays train and test data, 1 - display only test data
+        plot_counter (int) - figure number.                              
         
     """    
     fig, ax = plt.subplots(1, 1, figsize=(10, 4)) # plt.sca(axes)
@@ -228,6 +234,10 @@ def get_signals_comparison_plot(
         plt.legend(lines, labels)
         plt.suptitle(f'Gestures')
         plt.tight_layout()
+        
+    if plot_counter is not None:
+        plt.suptitle(f"Fig.{plot_counter} - Model learning",  fontsize=14) # y=-0.1,
+        plt.write_image(f'../figures/fig_{plot_counter}.png', engine="kaleido")
         
         
 def plot_history(history, title:str=None, plot_counter:int=None):
