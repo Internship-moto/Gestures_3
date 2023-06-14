@@ -137,31 +137,31 @@ def get_mse(y_test:np.array,
 #-------- preprocessing-------------
  
  
-def preprocessing_0(col:pd.Series, window_length:int=config.window_length, polyorder:int=config.polyorder) -> pd.Series:
-    """Savitsky-golay filter https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.savgol_filter.html
+# def preprocessing_0(col:pd.Series, window_length:int=config.window_length, polyorder:int=config.polyorder) -> pd.Series:
+#     """Savitsky-golay filter https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.savgol_filter.html
 
-    Args:
-        col (pd.Series): raw signals of a sensor
-        window_length (int) - window length. By default window_length=60
-        polyorder (int) - extent of the polynom. By default polyorder=4
-    Returns:
-        col (pd.Series): filtered signals of a sensor
-    """    
-    return savgol_filter(col, window_length, polyorder)
+#     Args:
+#         col (pd.Series): raw signals of a sensor
+#         window_length (int) - window length. By default window_length=60
+#         polyorder (int) - extent of the polynom. By default polyorder=4
+#     Returns:
+#         col (pd.Series): filtered signals of a sensor
+#     """    
+#     return savgol_filter(col, window_length, polyorder)
 
-def preprocessing_1(b:int, a:float, col:pd.Series) -> pd.Series: 
-    """digital filter forward and backward to a signal
-    from https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.filtfilt.html
-    Args:
-        b (int): The numerator coefficient vector of the filter.
-        a (float): The denominator coefficient vector of the filter. If a[0] is not 1, then both a and b are normalized by a[0]
-        col (pd.Series): raw signals of a sensor
+# def preprocessing_1(b:int, a:float, col:pd.Series) -> pd.Series: 
+#     """digital filter forward and backward to a signal
+#     from https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.filtfilt.html
+#     Args:
+#         b (int): The numerator coefficient vector of the filter.
+#         a (float): The denominator coefficient vector of the filter. If a[0] is not 1, then both a and b are normalized by a[0]
+#         col (pd.Series): raw signals of a sensor
 
-    Returns:
-        filtfilt (pd.Series): filtered signals of a sensor
-    """    
-    bb, aa = butter(b, a)
-    return filtfilt(bb, aa, col)
+#     Returns:
+#         filtfilt (pd.Series): filtered signals of a sensor
+#     """    
+#     bb, aa = butter(b, a)
+#     return filtfilt(bb, aa, col)
 
 
 
@@ -175,11 +175,11 @@ def get_active_sensors(arr:np.array ):
 
 
 
-def get_means(df:np.array, sensors:list):
+def get_means(arr:np.array, sensors:list):
     """get sensor means and std
 
     Args:
-        df (pd.DataFrame): original dataframe
+        arr (pd.DataFrame): original dataframe
         sensors (list, optional): sensor index. Defaults to sensors.
 
     Returns:
@@ -189,16 +189,16 @@ def get_means(df:np.array, sensors:list):
 
     # словарь из данных активных сенсоров: среднее и ст. откл
     for i in sensors:
-        ranges[i] = [np.mean(df[:,i]).round(5), np.std(df[:,i]).round()]
+        ranges[i] = [np.mean(arr[:,i]).round(5), np.std(arr[:,i]).round(3)]
     
     return ranges
 
 
-def get_limits(arr, limits=None):
+def get_limits(arr:np.array, limits=None):
     """ Replace outliers with +/- 1.5*Interquartile range
 
     Args:
-        df (pd.DataFrame): _description_
+        arr (np.array): _description_
         iqrs (list, optional): _description_. Defaults to None.
 
     Returns:
@@ -209,7 +209,7 @@ def get_limits(arr, limits=None):
         limits = dict() 
         
         # Заменяем выбросы на нижнюю и верхнюю границу в цикле
-        for i in OMG_CH:
+        for i in range(len(OMG_CH)):
             #i = int(i)
             IQR  = np.quantile(arr[:,i], .75) - np.quantile(arr[:,i], .25)
             low  = np.quantile(arr[:,i], .25) - 1.5*IQR
@@ -218,14 +218,15 @@ def get_limits(arr, limits=None):
             # добавляем в список граничные значения сигналов
             limits[i] = [low, high]
             # Обрезка выбросов по границе окна
+            #arr_clipped = arr.copy()
             arr[:,i] = np.clip(arr[:,i], low, high)
             
-        return arr, limits
+        return arr,  limits
         
     else:
     
         # Заменяем выбросы на нижнюю и верхнюю границу в цикле
-        for i in OMG_CH:
+        for i in range(len(OMG_CH)):
             arr[:,i] = np.clip(arr[:,i], limits[i][0], limits[i][1])
         
     return arr
