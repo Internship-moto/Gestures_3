@@ -22,7 +22,7 @@ if not sys.warnoptions:
 sys.path.insert(1, '../')
 
 from utils.config_reader import config_reader
-from utils.figures import get_all_sensors_plot  #get_sensor_command_plot
+#from utils.figures import get_all_sensors_plot  #get_sensor_command_plot
 
 # import constants from the config
 config = config_reader('../config/data_config.json') 
@@ -117,7 +117,7 @@ def get_mse(y_test:np.array,
     GLOVE_CH = GLOVE_CH[:-1]  # Limit sensors number to 5
     #y_test = y_test * 100 # multiplication of test values
     
-    metrics_test = np.array([mean_squared_error(y_test[:,col], y_pred[:,col]) for col in range(len(GLOVE_CH))]).round(1) # for Numpy
+    metrics_test = np.round(np.array([mean_squared_error(y_test[:,col], y_pred[:,col]) for col in range(len(GLOVE_CH))]), 1) # for Numpy
     
     #display(pd.DataFrame({'Test':metrics_test}, index=GLOVE_CH))
     
