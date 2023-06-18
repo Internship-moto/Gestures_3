@@ -1,8 +1,7 @@
 # original directories
-config/
+
 data/
 models/
-notebooks/
 short_solutions/
 utils/
 *.json
