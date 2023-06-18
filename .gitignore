@@ -5,6 +5,7 @@ models/
 notebooks/
 short_solutions/
 utils/
+*.json
 
 
 # Byte-compiled / optimized / DLL files
