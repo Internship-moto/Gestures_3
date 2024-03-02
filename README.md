@@ -16,6 +16,12 @@
 
 
 ## Summary
+
+It was created a custom algorthm managing a bionic hand prosthesis. The mean execution time of the program is $7\pm1$ msec that is about five time less than an aveage human is needed to react. The core part of the algorithm is an LSTM neural network which adopts to various hand gestures and initial position of sensors.
+
+<p align="center"> <img src = "figures/prosthesis.gif"  alt="drawing" style="width:500px;"> </p>
+
+
 В ходе исследования создан алгоритм автоматизации протеза кисти на основе нейросети LSTM. Среднее время 1 вычисления составляет 7±1 мс, что в 5 раз меньше принятого ограничения в 33 мс на операцию. Избыточная подвижность протеза из-за ошибок предсказания модели успешно устраняется выходным фильтром. Алгоритм удовлетворительно адаптирутеся к произвольному монтажу датчиков.
 
 
