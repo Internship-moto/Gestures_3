@@ -1,4 +1,4 @@
-# Motorica task 3
+# Hand prosthesis automation
 
 
 
