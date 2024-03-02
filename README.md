@@ -1,7 +1,6 @@
 # Hand prosthesis automation
 
 
-
 ## Содержание
 
 * [Summary](README.md#Summary)
