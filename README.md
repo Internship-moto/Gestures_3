@@ -5,8 +5,7 @@
 
 * [Summary](README.md#Summary)
 * [Introduction](README.md#Introduction)
-    
-* [Data and methods](README.md#Данные-и-методы)  
+* [Data and methods](README.md#Data-and-methods)  
 * [Результаты](README.md#Результаты)     
 * [Проверка универсальности алгоритма](README.md#Проверка-универсальности-алгоритма)
 * [Заключение](README.md#Заключение)                    
@@ -20,19 +19,21 @@ It was created a custom algorthm to manage a bionic hand prosthesis using muscle
 <p align="center"> <img src = "figures/prosthesis.gif"  alt="drawing" style="width:500px;"> </p>
 
 ## Introduction
+
 A traumatic loss or damage of a person's hand significantly limits his work ability in modern society. Considerable rehabilitation of such patients can be done by bionic hand prostheses.
 
 Automation of prosthetics is a labor-intensive engineering task. On the other hand, modern powerful and lightweight microcontrollers combined with artificial intelligence make it possible to create a more advanced prosthetic hand.
 
 The project goal was to develop an autoamtion algorithm for a bionic hand prosthesis that predicts finger coordinates in the range from 0 to 100 based on signals from optomyographic sensors. The operating time of 1 cycle of the algorithm should be less than 33 ms. In addition, it is necessary to check the algorithm's adaptivity to various montages of the prosthesis.
 
-## Данные и методы
-Экспериментальные данные представлены в формате .palm. Для их преобразовывание в формат .csv и обработки средствами Pandas используется специальная функция. Исходными данными являются дискретные сигналы 50 оптомиографических датчиков (ОМГ), которые равномерно распределены во времени с шагом в 33 мс (1 тик или 1 период). Помимо сигналов ОМГ датчиков также записовались данные с акселерометров и гироскопов. Снятие показаний выполнялось непрерывно с помощью перчатки (рис.1), на которой установлены датчики (Glove). 
+## Data and methods
+
+As input data, we used signals from forearm muscles which were aquired by a following standardized protocol: an experimenter (having two healthy hands) had been performed a repeating sequence of gestures for about 10 minutes. The movements set consists of the most frequently encountered finger gestures in everyday life: grip, open palm, “pistol”, bend of the thumb, etc. Muscle tension was recorded by 50 optomyographic (OMG) sensors with the frequency of 30.3 Hz. In addition, The finger coordinates, their acceleration and the hand angle were measured by additional set of sensors,accelerometers and hyroscopes respectively. All these detectors were attached to the special glove (Fig. 1).
 
 <p align="center"> <img src = "figures/fig_1_Glove_art.PNG"  alt="drawing" style="width:400px;"> </p>
 
-Экспериментатор выполнял повторяющуюся последовательность жестов согласно выбранному протоколу, который содержит наиболее часто встречающихся в быту жестов: хват, открытая ладонь, "пистолет", сгиб большого пальца, и др.  Сигналы ОМГ и координаты пальцев представлены на рис.2.
-
+The experimental data set of discrete signals was originally recorded in .palm format and converted into .csv format using Pandas and MNE open library. A sample of muscle signal and fingrer coordinates is shown on the Fig.2.
+ 
 <center> <img src = "figures/fig_2.png"  alt="drawing" style="width:1000px;"> </center>
 
 Распознование экспериментальных данных каждого монтажа по отдельности затрудено по нескольким причинам: 
