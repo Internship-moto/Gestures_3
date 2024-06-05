@@ -28,21 +28,21 @@ The project goal was to develop an autoamtion algorithm for a bionic hand prosth
 
 ## Data and methods
 
-As input data, we used signals from forearm muscles which were aquired by a following standardized protocol: an experimenter (having two healthy hands) had been performed a repeating sequence of gestures for about 10 minutes. The movements set consists of the most frequently encountered finger gestures in everyday life: grip, open palm, “pistol”, bend of the thumb, etc. Muscle tension was recorded by 50 optomyographic (OMG) sensors with the frequency of 30.3 Hz. In addition, The finger coordinates, their acceleration and the hand angle were measured by additional set of sensors,accelerometers and hyroscopes respectively. All these detectors were attached to the special glove (Fig. 1).
+As input data, we used signals from forearm muscles which were aquired by a following standardized protocol: an experimenter (having two healthy hands) had been performed a repeating sequence of gestures. The movements set consists of the most frequently encountered finger gestures in everyday life: grip, open palm, “pistol”, bend of the thumb, etc. Muscle tension was recorded by 50 optomyographic (OMG) sensors with the frequency of 30.3 Hz. The total recorded time was slightly less than 30 minutes. Every 10 minutes the experimenter was changing the orientation of the inner palm side: 0 degrees (parallel to the ground), 90 degrees, and -90 degrees. The finger coordinates, their acceleration and the palm angle were measured by an additional set of sensors,accelerometers and hyroscopes respectively. All these detectors were attached to the special glove (Fig. 1).
 
 <p align="center"> <img src = "figures/fig_1_Glove_art.PNG"  alt="drawing" style="width:400px;"> </p>
 
-The experimental data set of discrete signals was originally recorded in .palm format and converted into .csv format using Pandas and MNE open library. A sample of muscle signal and fingrer coordinates is shown on the Fig.2.
+The experimental set of discrete signals was originally recorded in .palm format and converted into .csv format using Pandas and the MNE open library. A sample of muscle signal and fingrer coordinates is shown on the Fig.2.
  
 <center> <img src = "figures/fig_2.png"  alt="drawing" style="width:1000px;"> </center>
 
-Распознование экспериментальных данных каждого монтажа по отдельности затрудено по нескольким причинам: 
-* характер сигналов изменяется во времени для одинаковых жестов
-* при выполнении большинства жестов движение пальцев осуществляется совместно
-* напряжение и расслабление мышц предплечья в процессе жеста может происходить неравномерно
-* сложно установить ОМГ датчики на одинаковый участок кожи, чтобы получить "одинаковый монтаж", и т.д. 
+During the signals analysis we faced with multiple challenges:
+* the signals amplitude of the same gestures changes over time. This might be happened due to fatigue of the experimenter.
+* fingers move together while performing most of gestures. This dynamics was caused by natural structure of human hands and inherited characteristics of ligaments.
+* tension and relaxation of the forearm muscles during the gesture may occur unevenly in time. This may also be explained by natural structure of human hand.
+* it is difficult to repeat a sensor installation when OMG sensors are placed on the same area of the forearm. The detection area is relatively small whereas the muscle surface is uneven. As a result, it is hard to find the same muscle area.
 
-После сбора экспериментальных данных происходило снятие перчатки. Затем сбор данных повторялся при новом монтаже перчатки. При этом характер и средние уровени показаний ОМГ датчиков изменялись (см. рис.3). Это обстоятельство ограничивает объединение сигналов разных монтажей без предобработки для тренировки модели. Поэтому было решено использовать данные 2 монтажа для обучения модели. 
+These circumstances limit consecutive combination of raw signals from different montages. Thus, we decided to modulate the frequency of the second montage before its join to the first montage (see Fig. 3).  
 
 <p align="center"> <img src = "figures/fig_3_montage.png"  alt="drawing" style="width:300px;"> </p>
 
