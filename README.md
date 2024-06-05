@@ -1,38 +1,30 @@
 # Hand prosthesis automation
 
 
-## Содержание
+## Content
 
 * [Summary](README.md#Summary)
-* [Введение](README.md#Введение)    
-* [Данные и методы](README.md#Данные-и-методы)  
+* [Introduction](README.md#Introduction)
+    
+* [Data and methods](README.md#Данные-и-методы)  
 * [Результаты](README.md#Результаты)     
 * [Проверка универсальности алгоритма](README.md#Проверка-универсальности-алгоритма)
 * [Заключение](README.md#Заключение)                    
 * [Структура проекта](README.md#Структура-проекта)        
 
 
-
-
 ## Summary
 
-It was created a custom algorthm managing a bionic hand prosthesis. The mean execution time of the program is $7\pm1$ msec that is about five time less than an aveage human is needed to react. The core part of the algorithm is an LSTM neural network which adopts to various hand gestures and initial position of sensors.
+It was created a custom algorthm to manage a bionic hand prosthesis using muscle signals form optomyographic sensors. The mean execution time of the program is $7\pm1$ msec that is about five time less than an aveage human is needed to react. The core part of the algorithm is an LSTM neural network which satisfactory adopts to various hand gestures and initial position of sensors.
 
 <p align="center"> <img src = "figures/prosthesis.gif"  alt="drawing" style="width:500px;"> </p>
 
+## Introduction
+A traumatic loss or damage of a person's hand significantly limits his work ability in modern society. Considerable rehabilitation of such patients can be done by bionic hand prostheses.
 
-В ходе исследования создан алгоритм автоматизации протеза кисти на основе нейросети LSTM. Среднее время 1 вычисления составляет 7±1 мс, что в 5 раз меньше принятого ограничения в 33 мс на операцию. Избыточная подвижность протеза из-за ошибок предсказания модели успешно устраняется выходным фильтром. Алгоритм удовлетворительно адаптирутеся к произвольному монтажу датчиков.
+Automation of prosthetics is a labor-intensive engineering task. On the other hand, modern powerful and lightweight microcontrollers combined with artificial intelligence make it possible to create a more advanced prosthetic hand.
 
-
-## Введение
-Трудоспособнось человека в современном обществе существенно ограничивается после травматической потери или повреждения кисти. Для реабилитации таких пациентов могут применяться бионические протезы кисти.
-
-Автоматизация протезов является трудоемкой инженерной задачей. Сдругой стороны, современные легкие и мощные микроконтроллеры в сочетании с искусственном интеллектом позволяют создать более совершенный протез кисти.
-
-**Задача**
-
-Разработать алгоритм автоматизации бионического протеза кисти, предсказывающего координаты пальцев в диапазоне [0,100] по сигналам с оптомиографических датчиков. Время работы 1 цикла алгоритма должно составлять менее 33 мс.
-Кроме того, требуется проверить возможность преобразования данных различных монтажей для увеличения универсальности алгоритма.
+The project goal was to develop an autoamtion algorithm for a bionic hand prosthesis that predicts finger coordinates in the range from 0 to 100 based on signals from optomyographic sensors. The operating time of 1 cycle of the algorithm should be less than 33 ms. In addition, it is necessary to check the algorithm's adaptivity to various montages of the prosthesis.
 
 ## Данные и методы
 Экспериментальные данные представлены в формате .palm. Для их преобразовывание в формат .csv и обработки средствами Pandas используется специальная функция. Исходными данными являются дискретные сигналы 50 оптомиографических датчиков (ОМГ), которые равномерно распределены во времени с шагом в 33 мс (1 тик или 1 период). Помимо сигналов ОМГ датчиков также записовались данные с акселерометров и гироскопов. Снятие показаний выполнялось непрерывно с помощью перчатки (рис.1), на которой установлены датчики (Glove). 
