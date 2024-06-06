@@ -48,7 +48,7 @@ These circumstances limit consecutive combination of raw signals from different 
 
 ## Results
 
-Для предсказания координат пальцев разработан алгоритм из 4 логических блоков:
+To predict finger coordinates we designed an algorithm that consist of four logical blocks:
 * Предобработка данных
 * Модель машинного обучения
 * Постобработка предсказания
@@ -56,7 +56,7 @@ These circumstances limit consecutive combination of raw signals from different 
 
 Схема алгоритма представлена на рис.4.
 
-<p align="center"> <img src = "figures/fig_4_shceme.png"  alt="drawing" style="width:500px;"> </p>
+<p align="center"> <img src = "figures/fig_4_shceme_en.png"  alt="drawing" style="width:500px;"> </p>
 
 На стадии предобработки данные скалируются в диапазон [0,1]. Затем выбросы данных за пределами $\pm 1.5 \cdot IQR$ заменяются на граничные значения. После этого массив данных объединяется с массивом из нисходящих разностей между текущим значением сигнала и значением за 5-й прошедший период. 
 
