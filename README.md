@@ -49,20 +49,20 @@ These circumstances limit consecutive combination of raw signals from different 
 ## Results
 
 To predict finger coordinates we designed an algorithm that consist of four logical blocks:
-* Предобработка данных
-* Модель машинного обучения
-* Постобработка предсказания
-* Формирование команд
+* Signal preprocessing
+* Creation of the ML model
+* Postprocessing of predic
+* Command forming
 
-Схема алгоритма представлена на рис.4.
+Algorithm's scheme is shown on the fig.4.
 
 <p align="center"> <img src = "figures/fig_4_shceme_en.png"  alt="drawing" style="width:500px;"> </p>
 
-На стадии предобработки данные скалируются в диапазон [0,1]. Затем выбросы данных за пределами $\pm 1.5 \cdot IQR$ заменяются на граничные значения. После этого массив данных объединяется с массивом из нисходящих разностей между текущим значением сигнала и значением за 5-й прошедший период. 
+At the preprocessing stage, the data is scaled to the range  [0,1]. Data outliers outside $\pm 1.5 \cdot IQR$ are then replaced with boundary values. After this, the data array is combined with an array of descending differences between the current signal value and the value for the 5th past period.
 
-Объединённый массив предобработанных данных сначала разбивается на отрезки по 40 периодов для исключения обучения модели под протокол, что подтверждается графиком обучения (см. рис.5). Затем из массива выделяются тренировочнаяи тестовая выборки. Для предсказания координат используется нейросетевая модель со слоем LSTM, учитывая нелинейный характер ОМГ сигналов. Коэффициенты обученной модели сохраняются.  
+The combined array of preprocessed data is first divided into segments of 40 periods to exclude training of the model for the protocol, which is confirmed by the training schedule (see Fig. 5). Then training and test samples are selected from the array. To predict coordinates, a neural network model with an LSTM layer is used, taking into account the nonlinear nature of OMG signals. The coefficients of the trained model are saved.
 
-<p align="center"> <img src = "figures/fig_5.png"  alt="drawing" style="width:1000px;"> </p>
+<p align="center"> <img src = "figures/fig_5_en.png"  alt="drawing" style="width:800px;"> </p>
 
 Для ускоренного получения предсказания координат используется аналогичная нейросетевая модель, которая использует ранее сохранённые коэффиценты без дообучения на новых данных. Среднее время работы вычисления составляет $7 \pm 1 мс$ для тестовых данных.
 
