@@ -20,19 +20,23 @@ It was created a custom algorthm to manage a bionic hand prosthesis using muscle
 
 ## Introduction
 
-A traumatic loss or damage of a person's hand significantly limits his work ability in modern society. Considerable rehabilitation of such patients can be done by bionic hand prostheses.
+A traumatic loss or damage of a person's hand significantly limits his work ability in modern society. Even daily routine task like brushing teeth or grabbing a door handle can be slower. Although passive or body powered prostheses may add some freedom, their grippers lack universiality, and their construction restricts fine movements. Furtheromore, actuation systems of these types of prostheses may cause discomfort. As a result, passive and semi-active devices still limit the work capacity of an impaired person. By contrast, bionic prostheses, which allow independent moves of its fingers, are more compact, but could be considerably heavier because of accumulators. Nevertheless, their microcontroller-based actuating systems allow operators to make wider range of movements that assures better user experience. 
 
-Automation of prosthetics is a labor-intensive engineering task. On the other hand, modern powerful and lightweight microcontrollers combined with artificial intelligence make it possible to create a more advanced prosthetic hand.
+Since each traumtic incident is unique, the variation of hand disabilities is relatively broad. In this study, we consider the case of traumatic palm loss without severe affection to the forearm's muscules that actuated fingers. This biophysical condition fits best with the rehabilitation with a bionic hand prosthesis. 
+
+From the engineering point of view, the creation of a bionic prosthesis is associated with two classes of problems: electro mechanical and software. Modern microelectronics produces necessairy items: accumulators, acuators, and sensors, and also microcontrollers. Contemporaty microchips, which can be empowered with artificial intelligence, may execute complex algorithms. Nevertheless,  
 
 The project goal was to develop an autoamtion algorithm for a bionic hand prosthesis that predicts finger coordinates in the range from 0 to 100 based on signals from optomyographic sensors. The operating time of 1 cycle of the algorithm should be less than 33 ms. In addition, it is necessary to check the algorithm's adaptivity to various montages of the prosthesis.
 
+Despite the apparent simplicity of the human hand, it is actually a quite complex system.rehabilitation
+
 ## Data and methods
 
-As input data, we used signals from forearm muscles which were aquired by a following standardized protocol: an experimenter (having two healthy hands) had been performed a repeating sequence of gestures. The movements set consists of the most frequently encountered finger gestures in everyday life: grip, open palm, “pistol”, bend of the thumb, etc. Muscle tension was recorded by 50 optomyographic (OMG) sensors with the frequency of 30.3 Hz. The total recorded time was slightly less than 30 minutes. Every 10 minutes the experimenter was changing the orientation of the inner palm side: 0 degrees (parallel to the ground), 90 degrees, and -90 degrees. The finger coordinates, their acceleration and the palm angle were measured by an additional set of sensors,accelerometers and hyroscopes respectively. All these detectors were attached to the special glove (Fig. 1).
+As input data, we used signals from forearm muscles that were aquired by a following standardized protocol: an experimenter (having two healthy hands) had been performed a repeating sequence of gestures. The movements set consists of the most frequently encountered finger gestures in everyday life: grip, open palm, “pistol”, bend of the thumb, etc. Muscle tension was recorded by 50 optomyographic (OMG) sensors with the frequency of 30.3 Hz. The total recorded time was slightly less than 30 minutes. Every 10 minutes the experimenter was changing the orientation of the inner palm side: 0 degrees (parallel to the ground), 90 degrees, and -90 degrees. The finger coordinates, their acceleration and the fingers' angles were measured by an additional sensors, accelerometers and hyroscopes respectively. All these detectors were attached to the special glove, which analog is siaplayed on the Fig. 1.
 
 <p align="center"> <img src = "figures/fig_1_Glove_en.png"  alt="drawing" style="width:425px;"> </p>
 
-The experimental set of discrete signals was originally recorded in .palm format and converted into .csv format using Pandas and the MNE open library. A sample of muscle signal and fingrer coordinates is shown on the Fig.2.
+The experimental set of discrete signals was originally recorded in the *.palm* format and converted into the *.csv* format using the *Pandas* library and the *MNE* open library. A sample of muscle signal and fingrer coordinates is shown on the *Fig.2*.
  
 <center> <img src = "figures/fig_2_en.png"  alt="drawing" style="width:800px;"> </center>
 
@@ -58,13 +62,14 @@ Algorithm's scheme is shown on the fig.4.
 
 <p align="center"> <img src = "figures/fig_4_shceme_en.png"  alt="drawing" style="width:500px;"> </p>
 
-At the preprocessing stage, the data is scaled to the range  [0,1]. Data outliers outside $\pm 1.5 \cdot IQR$ are then replaced with boundary values. After this, the data array is combined with an array of descending differences between the current signal value and the value for the 5th past period.
+The data preprocessing includes several consequtive steps. On first, the raw signals need scaling to the range $r \in [0,1]$. Data outliers outside $\pm 1.5 \cdot IQR$ are then replaced with boundary values. After this, the data array is combined with an array of descending differences between the current signal value and the value for the 5th past period.
 
 The combined array of preprocessed data is first divided into segments of 40 periods to exclude training of the model for the protocol, which is confirmed by the training schedule (see Fig. 5). Then training and test samples are selected from the array. To predict coordinates, a neural network model with an LSTM layer is used, taking into account the nonlinear nature of OMG signals. The coefficients of the trained model are saved.
 
 <p align="center"> <img src = "figures/fig_5_en.png"  alt="drawing" style="width:800px;"> </p>
 
-Для ускоренного получения предсказания координат используется аналогичная нейросетевая модель, которая использует ранее сохранённые коэффиценты без дообучения на новых данных. Среднее время работы вычисления составляет $7 \pm 1 мс$ для тестовых данных.
+The model 
+To speed up the prediction of our model after deployment,  Для ускоренного получения предсказания координат используется аналогичная нейросетевая модель, которая использует ранее сохранённые коэффиценты без дообучения на новых данных. Среднее время работы вычисления составляет $7 \pm 1 мс$ для тестовых данных.
 
 <p align="center"> <img src = "figures/fig_6.png"  alt="drawing" style="width:500px;"> </p>
 
