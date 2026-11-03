@@ -24,11 +24,11 @@ A traumatic loss or damage of a person's hand significantly limits his work abil
 
 Since each traumtic incident is unique, the variation of hand disabilities is relatively broad. In this study, we consider the case of traumatic palm loss without severe affection to the forearm's muscules that actuated fingers. This biophysical condition fits best with the rehabilitation with a bionic hand prosthesis. 
 
-From the engineering point of view, the creation of a bionic prosthesis is associated with two classes of problems: electro mechanical and software. Modern microelectronics produces necessairy items: accumulators, acuators, and sensors, and also microcontrollers. Contemporaty microchips, which can be empowered with artificial intelligence, may execute complex algorithms. Nevertheless,  
+From the engineering point of view, a bionic prosthesis can be represented as a combination of three main systems: mechanical, electrical, and operational. The last system is in focus of current research because it automation of a prosthesis requires complex algorithms.
 
 The project goal was to develop an autoamtion algorithm for a bionic hand prosthesis that predicts finger coordinates in the range from 0 to 100 based on signals from optomyographic sensors. The operating time of 1 cycle of the algorithm should be less than 33 ms. In addition, it is necessary to check the algorithm's adaptivity to various montages of the prosthesis.
 
-Despite the apparent simplicity of the human hand, it is actually a quite complex system.rehabilitation
+
 
 ## Data and methods
 
