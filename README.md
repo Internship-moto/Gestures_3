@@ -24,7 +24,7 @@ A traumatic loss or damage of a person's hand significantly limits his work abil
 
 Since each traumtic incident is unique, the variation of hand disabilities is relatively broad. In this study, we consider the case of traumatic palm loss without severe affection to the forearm's muscules actuating fingers. This biophysical condition fits best with the rehabilitation with a non-invasive bionic hand prosthesis. 
 
-From the engineering point of view, a bionic prosthesis can be represented as a combination of three main systems: mechanical, electrical, and operational. The last system is in our particular interst because the prosthesis must imitate a natural biophysical function, and that is a difficult task of following reasons. On first, transmission of neuro signals through human nervs goes almost without delays. Any external system must be fast enough to assure positive user experience from its usage. On second, hand manipulation ususally involves different muscles, and each of them may change its state while performing a fine movement. Thus, the system must input a complex combination of neuro signals and output a coordinate of finger or fingers. On third, the displacement of muscules and their size of is unique for any forearm. This means prosthesis' sensors must percept neuro sygnals from certain areas of forearm rather than points. Taken into account these circumstances, a AI-based algorithm is the best solution for such a complex task.
+From the engineering point of view, a bionic prosthesis can be represented as a combination of three main systems: mechanical, electrical, and operational. The last system is in our particular interst because the prosthesis must imitate a natural biophysical function, and that is a difficult task of following reasons. On first, transmission of neuro signals through human nervs goes almost without delays. Any external system must be fast enough to assure positive user experience from its usage. On second, hand manipulation ususally involves different muscles, and each of them may change its state while performing a fine movement. Thus, the system must input a complex combination of neuro signals and output a coordinate of finger or fingers. On third, the location of muscules is unique for any forearm. Furthermore, the prosthesis has some flexibility on the forearm, so it does not necessairy reach the same musles after reattachment. This means the prosthesis' sensors must percept neuro sygnals from certain areas of forearm rather than points. Taken into account these circumstances, the best solution for such a complex signal analysis task could be an AI-based algorithm.
 
 Thus, the project goal was to develop an autoamtion algorithm for a bionic hand prosthesis that predicts finger coordinates in the range from 0 to 100 based on signals from optomyographic sensors. The operating time of 1 cycle of the algorithm should be less than 33 ms. In addition, it is necessary to check the algorithm's adaptivity to various montages of the prosthesis.
 
@@ -55,7 +55,7 @@ These circumstances limit consecutive combination of raw signals from different 
 To predict finger coordinates we designed an algorithm that consist of four logical blocks:
 * Signal preprocessing
 * Creation of the ML model
-* Postprocessing of predic
+* Postprocessing of the prediction
 * Command forming
 
 Algorithm's scheme is shown on the fig.4.
@@ -69,7 +69,7 @@ The combined array of preprocessed data is first divided into segments of 40 per
 <p align="center"> <img src = "figures/fig_5_en.png"  alt="drawing" style="width:800px;"> </p>
 
 To speed up the prediction of our model after deployment to the prosthesis, we used two important method. On firs, we selected a statefull model architecture, which buffers tensors. In addition, we transfered it the weights, which we obtained after model training.
-As a result, the total responce time of our algorithm on the test data lies within the range $7 \pm 1 \text { milli second}$ that is almost four times fewer than our limit of 33 milli second. 
+As a result, the total responce time of our algorithm on the test data lies within the range $7 \pm 1 \text {ms}$ that is almost four times fewer than our limit of $33 \text { ms}$. 
 
 <p align="center"> <img src = "figures/fig_6.png"  alt="drawing" style="width:500px;"> </p>
 
@@ -79,26 +79,25 @@ $$s_{t}=s_{t-1} + \alpha \cdot(x_{t}-s_{t-1})$$
 
 where: 
 * $\alpha$ - a smoothing coefficient within the range $\alpha \in [0,1]$
-* $s_{t}$ and $s_{t-1}$ - the coordinate value for the period $t$ and $t-1$ respectively.
+* $s_{t}$ and $s_{t-1}$ - the coordinate value for the periods $t$ and $t-1$ respectively.
 
-Tests have shown, that one filter is not enough to confront with unwanted finger movements. So we added a new condition, which allows movements if the predicted coordinate exceeds previous by at least 2 units. Although the measure has successfully elliminated the wrong tremor, the system appeared to be less sensible to slow movements. 
+Tests have shown, that one filter is not enough to confront the oversensibility of the model. So we added a new condition, which allows movements if the predicted coordinate exceeds previous by at least 2 units. Although the measure has successfully elliminated the wrong tremor, the system appeared to be less sensible to slow movements. 
 
 <p align="center"> <img src = "figures/fig_78.png"  alt="drawing" style="width:1000px;"> </p>
 
-## Проверка универсальности алгоритма
 
-Одной из задач исследования являлось получение универсального алгоритма, предсказывающего координаты пальцев на монтаже с относительно произвольным расположением ОМГ датчиков. На данных 1 монтажа был проверен следующий метод преобразования: 
-* определены номера "активных" датчиков, средние уровни сигналов которых превышают 200 единиц. Для таких датчиков вычислены средние значения. 
-* получено отношение средних значений сигналов для обоих монтажей
-* данные 1 монтажа домножались на кооэффициент отношения средних значений сигналов активных датчиков.
 
-Использованный метод преобразования частично повторяет последовательность движений для указательного и среднего пальцев (ENC2 и ENC3 соответственно), однако среднеквадратическая ошибка предсказания высокая.
+
+## Adaplivity check
+
+One of the tasks of current study was to ensure the algorithm may adapt well to new motages of the prosthesis. In practice, it means the system must identify "active" sensors e.g. those percepting the current state of muscles better. To realize this idea, we proposed following approach. Within every montage, we selected the first 20 sensors, whose average signal level exceeds 200 units, an arbitrary given value. The remaining "inactive" sensors outputed either relatively weak or a constant signal. In order to match signals of different montages, it was computed the total average value across  active sensors of the first montage. So, if the mean signal does not match, it will be adjusted by the coefficient. 
+
+Overall, the proposed method showed satisfactory result on the second motage. The algorithm fairly good predicts movements for both fingers: index and middle that are represented by ENC2 and ENC3 respectively. The forecased coordinate for other fingers is worse, and their  Mean Square Error value is higher.
 
 <p align="center"> <img src = "figures/fig_9.png"  alt="drawing" style="width:1000px;"> </p>
 
-
 ## Заключение
-Cоздан алгоритм расчёта координат пальцев для протеза кисти на основе нейросети LSTM. Достоиснства программного решеня заключаются в малом времени вычисления, малой среднеквадратической ошиби предсказания модели. Предложенный алгоритм обладает удовлетворительной адаптивностью к произвольному монтажу датчиков.
+This study explores an ai-based algorithm to automate the hand prosthesis. The algorithm's core is a machine learning models with LSTM architecture. The system reacts relatively fast, and it is relatively adaptive to new prosthesis positions on the forearm.
 
 
 ## Структура проекта
