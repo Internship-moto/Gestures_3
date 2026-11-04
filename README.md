@@ -62,27 +62,26 @@ Algorithm's scheme is shown on the fig.4.
 
 <p align="center"> <img src = "figures/fig_4_shceme_en.png"  alt="drawing" style="width:500px;"> </p>
 
-The data preprocessing includes several consequtive steps. On first, the raw signals need scaling to the range $r \in [0,1]$. Data outliers outside $\pm 1.5 \cdot IQR$ are then replaced with boundary values. After this, the data array is combined with an array of descending differences between the current signal value and the value for the 5th past period.
+The data preprocessing includes several consequtive steps. On first, the raw signals need scaling to the range $r \in [0,1]$. The outliers falling outside the ranage of $\pm 1.5 \cdot IQR$ are  replaced with the boundary values. After this, the data array is combined with an array of descending differences between the current signal value and the value for the 5th past period.
 
 The combined array of preprocessed data is first divided into segments of 40 periods to exclude training of the model for the protocol, which is confirmed by the training schedule (see Fig. 5). Then training and test samples are selected from the array. To predict coordinates, a neural network model with an LSTM layer is used, taking into account the nonlinear nature of OMG signals. The coefficients of the trained model are saved.
 
 <p align="center"> <img src = "figures/fig_5_en.png"  alt="drawing" style="width:800px;"> </p>
 
-
-To speed up the prediction of our model after deployment,  
-Для ускоренного получения предсказания координат используется аналогичная нейросетевая модель, которая использует ранее сохранённые коэффиценты без дообучения на новых данных. Среднее время работы вычисления составляет $7 \pm 1 мс$ для тестовых данных.
+To speed up the prediction of our model after deployment to the prosthesis, we used two important method. On firs, we selected a statefull model architecture, which buffers tensors. In addition, we transfered it the weights, which we obtained after model training.
+As a result, the total responce time of our algorithm on the test data lies within the range $7 \pm 1 \text { milli second}$ that is almost four times fewer than our limit of 33 milli second. 
 
 <p align="center"> <img src = "figures/fig_6.png"  alt="drawing" style="width:500px;"> </p>
 
-Предсказанные моделью координаты пальцев требуют преобразования, поскольку их значения сильно изменяются во времени из-за недостатка экспериментальных данных и высокой чувствительности модели. Для этого используется фильтр Хольта-Винтерса, который выполняет экспонентциальноге сглаживание координат по формуле:
+The lack of experimental data and the requirement to use algorithms with simple architecture caused that out model appeared quite sensible, which is affects the accumualtor charge of the prosthesis. In fact, its prediction was quite noisy that led to unwanted movements of artificial fingers. To elliminate these undesirable effect, we applied a Holt-Winters filter, which does exponential smoothing of predicted coordinates following the formula: 
 
 $$s_{t}=s_{t-1} + \alpha \cdot(x_{t}-s_{t-1})$$ 
 
-где: 
-* $\alpha$ - коэффициент сглаживания в диапазоне $\alpha \in [0,1]$
-* $s_{t}$ и $s_{t-1}$ - значение значение координаты за время $t$ и $t-1$ соответственно.
+where: 
+* $\alpha$ - a smoothing coefficient within the range $\alpha \in [0,1]$
+* $s_{t}$ and $s_{t-1}$ - the coordinate value for the period $t$ and $t-1$ respectively.
 
-После экспонентциального фильтра применяется алгоритм фильтрации мелких движений, которые отсекает изменение координат пальцев менее 2 единиц. Это позволяет устранить избыточную подвижность пальцев протеза и сохраняет заряд аккумулятора.
+Tests have shown, that one filter is not enough to confront with unwanted finger movements. So we added a new condition, which allows movements if the predicted coordinate exceeds previous by at least 2 units. Although the measure has successfully elliminated the wrong tremor, the system appeared to be less sensible to slow movements. 
 
 <p align="center"> <img src = "figures/fig_78.png"  alt="drawing" style="width:1000px;"> </p>
 
