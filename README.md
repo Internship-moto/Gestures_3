@@ -22,11 +22,11 @@ It was created a custom algorthm to manage a bionic hand prosthesis using muscle
 
 A traumatic loss or damage of a person's hand significantly limits his work ability in modern society. Even daily routine task like brushing teeth or grabbing a door handle can be slower. Although passive or body powered prostheses may add some freedom, their grippers lack universiality, and their construction restricts fine movements. Furtheromore, actuation systems of these types of prostheses may cause discomfort. As a result, passive and semi-active devices still limit the work capacity of an impaired person. By contrast, bionic prostheses, which allow independent moves of its fingers, are more compact, but could be considerably heavier because of accumulators. Nevertheless, their microcontroller-based actuating systems allow operators to make wider range of movements that assures better user experience. 
 
-Since each traumtic incident is unique, the variation of hand disabilities is relatively broad. In this study, we consider the case of traumatic palm loss without severe affection to the forearm's muscules that actuated fingers. This biophysical condition fits best with the rehabilitation with a bionic hand prosthesis. 
+Since each traumtic incident is unique, the variation of hand disabilities is relatively broad. In this study, we consider the case of traumatic palm loss without severe affection to the forearm's muscules actuating fingers. This biophysical condition fits best with the rehabilitation with a non-invasive bionic hand prosthesis. 
 
-From the engineering point of view, a bionic prosthesis can be represented as a combination of three main systems: mechanical, electrical, and operational. The last system is in focus of current research because it automation of a prosthesis requires complex algorithms.
+From the engineering point of view, a bionic prosthesis can be represented as a combination of three main systems: mechanical, electrical, and operational. The last system is in our particular interst because the prosthesis must imitate a natural biophysical function, and that is a difficult task of following reasons. On first, transmission of neuro signals through human nervs goes almost without delays. Any external system must be fast enough to assure positive user experience from its usage. On second, hand manipulation ususally involves different muscles, and each of them may change its state while performing a fine movement. Thus, the system must input a complex combination of neuro signals and output a coordinate of finger or fingers. On third, the displacement of muscules and their size of is unique for any forearm. This means prosthesis' sensors must percept neuro sygnals from certain areas of forearm rather than points. Taken into account these circumstances, a AI-based algorithm is the best solution for such a complex task.
 
-The project goal was to develop an autoamtion algorithm for a bionic hand prosthesis that predicts finger coordinates in the range from 0 to 100 based on signals from optomyographic sensors. The operating time of 1 cycle of the algorithm should be less than 33 ms. In addition, it is necessary to check the algorithm's adaptivity to various montages of the prosthesis.
+Thus, the project goal was to develop an autoamtion algorithm for a bionic hand prosthesis that predicts finger coordinates in the range from 0 to 100 based on signals from optomyographic sensors. The operating time of 1 cycle of the algorithm should be less than 33 ms. In addition, it is necessary to check the algorithm's adaptivity to various montages of the prosthesis.
 
 
 
@@ -68,8 +68,9 @@ The combined array of preprocessed data is first divided into segments of 40 per
 
 <p align="center"> <img src = "figures/fig_5_en.png"  alt="drawing" style="width:800px;"> </p>
 
-The model 
-To speed up the prediction of our model after deployment,  Для ускоренного получения предсказания координат используется аналогичная нейросетевая модель, которая использует ранее сохранённые коэффиценты без дообучения на новых данных. Среднее время работы вычисления составляет $7 \pm 1 мс$ для тестовых данных.
+
+To speed up the prediction of our model after deployment,  
+Для ускоренного получения предсказания координат используется аналогичная нейросетевая модель, которая использует ранее сохранённые коэффиценты без дообучения на новых данных. Среднее время работы вычисления составляет $7 \pm 1 мс$ для тестовых данных.
 
 <p align="center"> <img src = "figures/fig_6.png"  alt="drawing" style="width:500px;"> </p>
 
@@ -110,33 +111,26 @@ Cоздан алгоритм расчёта координат пальцев д
 ├── .gitignore
 ├── config 
 │   └── data_config.json            # configuration settings
-├── data                            # data archive
+├── data                            # raw data directory
 │   ├── sprint3_pilote1_mount1_gestures.palm
 │   └── sprint3_pilote1_mount2_gestures.palm
-├── figures                         # project figures
+├── figures                         # figures directory
 │   ├── fig_1_Glove_art.PNG
 │   ├── fig_2.png
 │   ├── fig_3_montage.png
 │   ├── fig_4_shceme.png
-│   ├── fig_5.png
 │   ├── fig_5_outliers.png
 │   ├── fig_6.png
 │   ├── fig_7.png
-│   ├── fig_78.png
-│   ├── fig_78.psd
 │   ├── fig_8 commands.png
 │   └── fig_9.png
-├── model
-│   └── best_model.hdf5         # models and weights
-├── models
+├── models                          # models and weights
 │   ├── MinMax_scaler.bin
 │   └── model_LSTM.hdf5
-├── notebooks                   # notebook
-│   ├── Gestures_3.ipynb
-│   ├── model
-│   └── sprint3.ipynb
+├── notebooks                       # notebooks d 
+│   └── Gestures_3.ipynb
 ├── README.md
-└── utils                       # functions and data
+└── utils                       # functions directory
     ├── config_reader.py
     ├── figures.py
     ├── functions.py
