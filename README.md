@@ -7,9 +7,9 @@
 * [Introduction](README.md#Introduction)
 * [Data and methods](README.md#Data-and-methods)  
 * [Results](README.md#Results)     
-* [Проверка универсальности алгоритма](README.md#Проверка-универсальности-алгоритма)
+* [Adaplivity check](README.md#Adaplivity-check)
 * [Заключение](README.md#Заключение)                    
-* [Структура проекта](README.md#Структура-проекта)        
+* [Project structure](README.md#Project-structure)        
 
 
 ## Summary
@@ -20,23 +20,23 @@ It was created a custom algorthm to manage a bionic hand prosthesis using muscle
 
 ## Introduction
 
-A traumatic loss or damage of a person's hand significantly limits his work ability in modern society. Even daily routine task like brushing teeth or grabbing a door handle can be slower. Although passive or body powered prostheses may add some freedom, their grippers lack universiality, and their construction restricts fine movements. Furtheromore, actuation systems of these types of prostheses may cause discomfort. As a result, passive and semi-active devices still limit the work capacity of an impaired person. By contrast, bionic prostheses, which allow independent moves of its fingers, are more compact, but could be considerably heavier because of accumulators. Nevertheless, their microcontroller-based actuating systems allow operators to make wider range of movements that assures better user experience. 
+A traumatic loss or damage of a person's hand significantly limits his work ability in modern society. Even daily routine task like brushing teeth or grabbing a door handle can be slower. Although passive or body powered prostheses may add some freedom, their grippers lack universiality, and their construction restricts fine movements. Furtheromore, actuation systems of these types of artificial limbs may cause discomfort. As a result, passive and semi-active devices still limit the work capacity of an impaired person. By contrast, bionic prostheses, which allow independent moves of its fingers, are more compact, but could be considerably heavier because of accumulators. Nevertheless, their microcontroller-based actuating systems allow operators to make wider range of movements that assures better user experience. 
 
 Since each traumtic incident is unique, the variation of hand disabilities is relatively broad. In this study, we consider the case of traumatic palm loss without severe affection to the forearm's muscules actuating fingers. This biophysical condition fits best with the rehabilitation with a non-invasive bionic hand prosthesis. 
 
 From the engineering point of view, a bionic prosthesis can be represented as a combination of three main systems: mechanical, electrical, and operational. The last system is in our particular interst because the prosthesis must imitate a natural biophysical function, and that is a difficult task of following reasons. On first, transmission of neuro signals through human nervs goes almost without delays. Any external system must be fast enough to assure positive user experience from its usage. On second, hand manipulation ususally involves different muscles, and each of them may change its state while performing a fine movement. Thus, the system must input a complex combination of neuro signals and output a coordinate of finger or fingers. On third, the location of muscules is unique for any forearm. Furthermore, the prosthesis has some flexibility on the forearm, so it does not necessairy reach the same musles after reattachment. This means the prosthesis' sensors must percept neuro sygnals from certain areas of forearm rather than points. Taken into account these circumstances, the best solution for such a complex signal analysis task could be an AI-based algorithm.
 
-Thus, the project goal was to develop an autoamtion algorithm for a bionic hand prosthesis that predicts finger coordinates in the range from 0 to 100 based on signals from optomyographic sensors. The operating time of 1 cycle of the algorithm should be less than 33 ms. In addition, it is necessary to check the algorithm's adaptivity to various montages of the prosthesis.
-
-
+Thus, the project goals can be formulated as follows. On first, we must develop an autoamtion algorithm for a bionic hand prosthesis that predicts finger coordinates by the state of forearm musles. Taken into account the muscle motility under skin, the algorithm must be agnostic to various turns of the forerm.
 
 ## Data and methods
 
-As input data, we used signals from forearm muscles that were aquired by a following standardized protocol: an experimenter (having two healthy hands) had been performed a repeating sequence of gestures. The movements set consists of the most frequently encountered finger gestures in everyday life: grip, open palm, “pistol”, bend of the thumb, etc. Muscle tension was recorded by 50 optomyographic (OMG) sensors with the frequency of 30.3 Hz. The total recorded time was slightly less than 30 minutes. Every 10 minutes the experimenter was changing the orientation of the inner palm side: 0 degrees (parallel to the ground), 90 degrees, and -90 degrees. The finger coordinates, their acceleration and the fingers' angles were measured by an additional sensors, accelerometers and hyroscopes respectively. All these detectors were attached to the special glove, which analog is siaplayed on the Fig. 1.
+The data aquisition procedure had certain limitations. The state of muscles can be recorded only from a person with a healthy upper limbs. A disable person with the absent hand does not fit to this process because he or she cannot confirm what movements he executed. In addition, the experiment covers a set of gestures, which human the most frequently does in everyday life such as grip, open palm, “pistol”, bend of the thumb, etc. To simplify the prediction, it was created a standardized gesture protocol: an experimenter had been performing the repeatitive sequence of gestures. Every 10 minutes he turned his palm, so its angle changed from $0$ degrees (parallel to the ground) to $90$ degrees (turned to the right), and $-90$ degrees (turned to the left). The total recording period was restricted to about 30 minutes, because the pilot loses precision in gestures execution over time.
+
+Since the grounded true data come from two different sources such as forearm and hand, their states were recorded by two separate sensing devices working in pair. The muscle condition was estimated with a custom-made bangage with a number of *optomyographic* (OMG) sensors. These 50-channels sensors precisely measured contraction or stretching of forearm muscles during hand movement with the frequency of 30.3 Hz. Another device, which was used for monitoring of hand gestures, looked like a glove to carry sensors of different types. Five *flexion sensors* estimated the angles of every phalange. Three *accelerators* monitored the speed of fingers during gestures. *Hyroscopes* recorded the orienation of palm. An a analog of the glove is displayed on the Fig. 1.
 
 <p align="center"> <img src = "figures/fig_1_Glove_en.png"  alt="drawing" style="width:425px;"> </p>
 
-The experimental set of discrete signals was originally recorded in the *.palm* format and converted into the *.csv* format using the *Pandas* library and the *MNE* open library. A sample of muscle signal and fingrer coordinates is shown on the *Fig.2*.
+Following the recording, the data undergo some transformation for convenience. The raw data was originally recorded in a rare  *.palm* format. So it was converted into a *.csv* format, which is a standard for such data cnalysis tasks, using the *Pandas* and the *MNE* open libraries. In addition, discrete digital signals from hyroscopes were transformed within the range from $-100$ to $100$; other signals - from $0$ to $100$. A sample of resulting signal and fingrer coordinates are displayed on the *Fig.2*.
  
 <center> <img src = "figures/fig_2_en.png"  alt="drawing" style="width:800px;"> </center>
 
@@ -96,11 +96,11 @@ Overall, the proposed method showed satisfactory result on the second motage. Th
 
 <p align="center"> <img src = "figures/fig_9.png"  alt="drawing" style="width:1000px;"> </p>
 
-## Заключение
-This study explores an ai-based algorithm to automate the hand prosthesis. The algorithm's core is a machine learning models with LSTM architecture. The system reacts relatively fast, and it is relatively adaptive to new prosthesis positions on the forearm.
+## Conclusion
+This study explores an ai-based algorithm to automate the hand prosthesis. The algorithm's core is a machine learning models with LSTM architecture. The system reacts relatively fast, and it is relatively adaptive to new positions that artificial limb takes on the forearm.
 
 
-## Структура проекта
+## Project structure
 
 <details>
   <summary>display project structure </summary>
@@ -128,7 +128,7 @@ This study explores an ai-based algorithm to automate the hand prosthesis. The a
 ├── notebooks                       # notebooks d 
 │   └── Gestures_3.ipynb
 ├── README.md
-└── utils                       # functions directory
+└── utils                           # functions directory
     ├── config_reader.py
     ├── figures.py
     ├── functions.py
